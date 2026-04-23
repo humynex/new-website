@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Book a Project — HUMYNEX</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --cyan:   #00b4d8;
+      --purple: #7b2fff;
+      --green:  #00d4aa;
+      --bg:     #020509;
+      --text:   #e8eaf0;
+    }
+
+    html, body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Space Grotesk', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ── Background grid ── */
+    body::before {
+      content: '';
+      position: fixed; inset: 0; z-index: 0;
+      background-image:
+        linear-gradient(rgba(0,180,216,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,180,216,0.04) 1px, transparent 1px);
+      background-size: 48px 48px;
+      pointer-events: none;
+    }
+
+    /* ── Vignette ── */
+    body::after {
+      content: '';
+      position: fixed; inset: 0; z-index: 0;
+      background: radial-gradient(ellipse at center, transparent 40%, rgba(2,5,9,0.7) 80%, rgba(2,5,9,0.95) 100%);
+      pointer-events: none;
+    }
+
+    /* ── Scanlines ── */
+    .scanlines {
+      position: fixed; inset: 0; z-index: 1; pointer-events: none; opacity: 0.018;
+      background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.5) 2px, rgba(0,0,0,0.5) 4px);
+    }
+
+    /* ── Nav ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 50;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 22px 48px;
+      border-bottom: 1px solid rgba(0,180,216,0.08);
+      background: rgba(2,5,9,0.72);
+      backdrop-filter: blur(16px);
+    }
+    .nav-logo {
+      font-family: 'Space Mono', monospace;
+      font-size: 14px; font-weight: 700; letter-spacing: 0.22em;
+      color: #fff; text-decoration: none;
+      text-shadow: 0 0 20px rgba(0,180,216,0.4);
+    }
+    .nav-back {
+      font-family: 'Space Mono', monospace; font-size: 11px;
+      letter-spacing: 0.15em; color: rgba(0,180,216,0.65);
+      text-decoration: none; transition: color 0.3s;
+    }
+    .nav-back:hover { color: var(--cyan); }
+
+    /* ── Page wrapper ── */
+    .page {
+      position: relative; z-index: 2;
+      min-height: 100vh;
+      display: flex; flex-direction: column; align-items: center;
+      padding: 120px 24px 80px;
+    }
+
+    /* ── Header ── */
+    .bk-header { text-align: center; margin-bottom: 52px; }
+    .bk-eyebrow {
+      font-family: 'Space Mono', monospace; font-size: 10px;
+      letter-spacing: 0.4em; color: rgba(0,180,216,0.55);
+      text-transform: uppercase; margin-bottom: 14px;
+    }
+    .bk-title {
+      font-size: clamp(32px, 5vw, 64px); font-weight: 700;
+      line-height: 1.0; letter-spacing: -0.02em;
+      background: linear-gradient(135deg, #ffffff 0%, #00b4d8 50%, #7b2fff 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 16px;
+    }
+    .bk-sub {
+      font-family: 'Space Mono', monospace; font-size: 11px;
+      color: rgba(232,234,240,0.35); letter-spacing: 0.12em;
+    }
+
+    /* ── Form container ── */
+    .bk-form-wrap {
+      width: 100%; max-width: 720px;
+      background: rgba(0,6,18,0.82);
+      border: 1px solid rgba(0,180,216,0.14);
+      backdrop-filter: blur(24px);
+      position: relative;
+      padding: 52px 48px;
+    }
+    .bk-form-wrap::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0; height: 2px;
+      background: linear-gradient(90deg, transparent, var(--cyan), var(--purple), transparent);
+    }
+    .bk-form-wrap::after {
+      content: '';
+      position: absolute; bottom: 0; left: 0; right: 0; height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(0,180,216,0.3), transparent);
+    }
+
+    /* ── Form elements ── */
+    .bf-section {
+      margin-bottom: 36px;
+      padding-bottom: 36px;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+    .bf-section:last-of-type { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+    .bf-section-label {
+      font-family: 'Space Mono', monospace; font-size: 9px;
+      letter-spacing: 0.35em; color: rgba(0,180,216,0.5);
+      text-transform: uppercase; margin-bottom: 20px;
+      display: flex; align-items: center; gap: 12px;
+    }
+    .bf-section-label::after {
+      content: ''; flex: 1; height: 1px;
+      background: linear-gradient(90deg, rgba(0,180,216,0.2), transparent);
+    }
+
+    .bf-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    @media (max-width: 580px) { .bf-row { grid-template-columns: 1fr; } }
+
+    .bf-group { display: flex; flex-direction: column; gap: 7px; }
+    .bf-label {
+      font-family: 'Space Mono', monospace; font-size: 9px;
+      letter-spacing: 0.2em; color: rgba(232,234,240,0.45);
+      text-transform: uppercase;
+    }
+    .bf-input {
+      background: rgba(0,12,28,0.7);
+      border: 1px solid rgba(0,180,216,0.14);
+      color: var(--text);
+      font-family: 'Space Grotesk', sans-serif; font-size: 14px;
+      padding: 13px 16px; outline: none; width: 100%;
+      transition: border-color 0.3s, box-shadow 0.3s;
+    }
+    .bf-input:focus {
+      border-color: rgba(0,180,216,0.55);
+      box-shadow: 0 0 0 1px rgba(0,180,216,0.12), 0 0 24px rgba(0,180,216,0.06);
+    }
+    .bf-input::placeholder { color: rgba(232,234,240,0.18); }
+    select.bf-input option { background: #030b18; }
+
+    /* ── Plan selector ── */
+    .bf-plans {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;
+    }
+    @media (max-width: 580px) { .bf-plans { grid-template-columns: 1fr; } }
+
+    .bf-plan {
+      position: relative;
+      border: 1px solid rgba(255,255,255,0.08);
+      padding: 16px 14px;
+      cursor: pointer;
+      transition: border-color 0.3s, background 0.3s;
+    }
+    .bf-plan input[type="radio"] { display: none; }
+    .bf-plan-name {
+      font-family: 'Space Mono', monospace; font-size: 9px;
+      letter-spacing: 0.25em; color: var(--plan-color, var(--cyan));
+      margin-bottom: 6px; text-transform: uppercase;
+    }
+    .bf-plan-price {
+      font-family: 'Space Grotesk', sans-serif; font-size: 22px;
+      font-weight: 700; color: #fff;
+    }
+    .bf-plan::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0; height: 2px;
+      background: var(--plan-color, var(--cyan));
+      opacity: 0; transition: opacity 0.3s;
+    }
+    .bf-plan:has(input:checked),
+    .bf-plan.selected {
+      background: rgba(0,14,32,0.6);
+      border-color: var(--plan-color, var(--cyan));
+    }
+    .bf-plan:has(input:checked)::before,
+    .bf-plan.selected::before { opacity: 1; }
+    .bf-plan:has(input:checked) .bf-plan-price { text-shadow: 0 0 20px rgba(255,255,255,0.2); }
+
+    /* ── Date input ── */
+    input[type="date"].bf-input::-webkit-calendar-picker-indicator {
+      filter: invert(0.7) sepia(1) saturate(2) hue-rotate(170deg);
+      cursor: pointer;
+    }
+
+    /* ── Submit ── */
+    .bf-submit {
+      width: 100%; padding: 16px;
+      background: rgba(0,180,216,0.08);
+      border: 1px solid rgba(0,180,216,0.45);
+      color: #fff; font-family: 'Space Mono', monospace;
+      font-size: 12px; font-weight: 700; letter-spacing: 0.25em;
+      text-transform: uppercase; cursor: pointer;
+      transition: all 0.35s ease; position: relative; overflow: hidden;
+      margin-top: 32px;
+    }
+    .bf-submit::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: linear-gradient(135deg, rgba(0,180,216,0.15), rgba(123,47,255,0.1));
+      opacity: 0; transition: opacity 0.35s;
+    }
+    .bf-submit:hover::before { opacity: 1; }
+    .bf-submit:hover {
+      border-color: rgba(0,180,216,0.8);
+      box-shadow: 0 0 40px rgba(0,180,216,0.12), 0 0 80px rgba(0,180,216,0.05);
+    }
+    .bf-submit:active { transform: scale(0.995); }
+
+    /* ── Success state ── */
+    #bk-success {
+      display: none; text-align: center; padding: 40px 0;
+    }
+    .bk-success-icon {
+      font-size: 40px; margin-bottom: 18px;
+      color: var(--cyan);
+      text-shadow: 0 0 24px var(--cyan);
+    }
+    .bk-success-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 24px; font-weight: 700; color: #fff;
+      margin-bottom: 10px;
+    }
+    .bk-success-msg {
+      font-family: 'Space Mono', monospace; font-size: 11px;
+      color: rgba(232,234,240,0.45); letter-spacing: 0.1em;
+    }
+
+    /* ── Corner decorations ── */
+    .bk-corner {
+      position: absolute;
+      width: 14px; height: 14px;
+      border-color: rgba(0,180,216,0.35);
+      border-style: solid;
+    }
+    .bk-corner-tl { top: -1px; left: -1px; border-width: 2px 0 0 2px; }
+    .bk-corner-tr { top: -1px; right: -1px; border-width: 2px 2px 0 0; }
+    .bk-corner-bl { bottom: -1px; left: -1px; border-width: 0 0 2px 2px; }
+    .bk-corner-br { bottom: -1px; right: -1px; border-width: 0 2px 2px 0; }
+
+    /* ── HUD label ── */
+    .bk-hud {
+      position: fixed; bottom: 28px; right: 40px; z-index: 10;
+      font-family: 'Space Mono', monospace; font-size: 9px;
+      letter-spacing: 0.2em; color: rgba(0,180,216,0.3);
+      text-transform: uppercase;
+    }
+  </style>
+</head>
+<body>
+<div class="scanlines"></div>
+
+<!-- Nav -->
+<nav>
+  <a class="nav-logo" href="index.html">HUMYNEX</a>
+  <a class="nav-back" href="index.html">← Back to Site</a>
+</nav>
+
+<div class="page">
+  <!-- Header -->
+  <div class="bk-header">
+    <div class="bk-eyebrow">// INITIATE PROJECT</div>
+    <h1 class="bk-title">Book Your Build</h1>
+    <p class="bk-sub">// FILL OUT THE FORM — WE RESPOND WITHIN 24 HOURS</p>
+    <p style="margin-top:18px;font-family:'Space Grotesk',sans-serif;font-size:13px;color:rgba(232,234,240,0.45);max-width:480px;margin-left:auto;margin-right:auto;line-height:1.8">Custom websites, AI agents &amp; automation systems — built by a self-made owner from Philadelphia. Tell me what you need and I'll make it happen.</p>
+  </div>
+
+  <!-- Form -->
+  <div class="bk-form-wrap">
+    <div class="bk-corner bk-corner-tl"></div>
+    <div class="bk-corner bk-corner-tr"></div>
+    <div class="bk-corner bk-corner-bl"></div>
+    <div class="bk-corner bk-corner-br"></div>
+
+    <!-- Success -->
+    <div id="bk-success">
+      <div class="bk-success-icon">✓</div>
+      <div class="bk-success-title">Request Received</div>
+      <p class="bk-success-msg">// WE'LL REACH OUT WITHIN 24 HOURS TO CONFIRM YOUR BOOKING</p>
+    </div>
+
+    <form id="bk-form" action="https://formsubmit.co/aaollc05@gmail.com" method="POST">
+      <input type="hidden" name="_captcha" value="false">
+      <input type="hidden" name="_template" value="table">
+      <input type="hidden" name="_subject" value="New HUMYNEX Booking Request">
+      <input type="hidden" name="_next" value="">
+
+      <!-- 01 — Contact -->
+      <div class="bf-section">
+        <div class="bf-section-label">01 / Contact Info</div>
+        <div class="bf-row">
+          <div class="bf-group">
+            <label class="bf-label" for="bk-name">Full Name</label>
+            <input class="bf-input" type="text" id="bk-name" name="name" placeholder="John Doe" required>
+          </div>
+          <div class="bf-group">
+            <label class="bf-label" for="bk-email">Email Address</label>
+            <input class="bf-input" type="email" id="bk-email" name="email" placeholder="you@company.com" required>
+          </div>
+        </div>
+      </div>
+
+      <!-- 02 — Date -->
+      <div class="bf-section">
+        <div class="bf-section-label">02 / Preferred Start Date</div>
+        <div class="bf-group">
+          <label class="bf-label" for="bk-date">When do you want to kick off?</label>
+          <input class="bf-input" type="date" id="bk-date" name="start_date" required>
+        </div>
+      </div>
+
+      <!-- 03 — Plan -->
+      <div class="bf-section">
+        <div class="bf-section-label">03 / Select Your Plan</div>
+        <div class="bf-plans">
+          <label class="bf-plan" style="--plan-color:#00b4d8">
+            <input type="radio" name="plan" value="Starter — $999">
+            <div class="bf-plan-name">Starter</div>
+            <div class="bf-plan-price">$999</div>
+          </label>
+          <label class="bf-plan" style="--plan-color:#7b2fff">
+            <input type="radio" name="plan" value="Growth — $2,200" checked>
+            <div class="bf-plan-name">Growth</div>
+            <div class="bf-plan-price">$2,200</div>
+          </label>
+          <label class="bf-plan" style="--plan-color:#00d4aa">
+            <input type="radio" name="plan" value="Enterprise — Custom">
+            <div class="bf-plan-name">Enterprise</div>
+            <div class="bf-plan-price">Custom</div>
+          </label>
+        </div>
+      </div>
+
+      <!-- 04 — Website Type -->
+      <div class="bf-section">
+        <div class="bf-section-label">04 / Project Type</div>
+        <div class="bf-group">
+          <label class="bf-label" for="bk-type">What kind of website or product?</label>
+          <select class="bf-input" id="bk-type" name="project_type" required>
+            <option value="" disabled selected>Select a type</option>
+            <option>Business / Contractor Site</option>
+            <option>E-Commerce Store</option>
+            <option>Portfolio / Creative Site</option>
+            <option>Landing Page</option>
+            <option>Web App / SaaS</option>
+            <option>Mobile App</option>
+            <option>AI Agent / Chatbot</option>
+            <option>Branding & Identity</option>
+            <option>Full-Stack Application</option>
+            <option>Other</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- 05 — Details -->
+      <div class="bf-section">
+        <div class="bf-section-label">05 / Project Details</div>
+        <div class="bf-group">
+          <label class="bf-label" for="bk-desc">Tell me everything — goals, pages, features, style</label>
+          <textarea class="bf-input" id="bk-desc" name="project_details" rows="6"
+            placeholder="Example: I need a 5-page site for my roofing company in Omaha. I want a hero video, before/after gallery, contact form, and Google Maps integration. Style: dark, bold, trustworthy..."
+            required style="resize: vertical;"></textarea>
+        </div>
+      </div>
+
+      <!-- 06 — Budget / Timeline notes -->
+      <div class="bf-section">
+        <div class="bf-section-label">06 / Additional Notes (Optional)</div>
+        <div class="bf-row">
+          <div class="bf-group">
+            <label class="bf-label" for="bk-budget">Budget Range</label>
+            <select class="bf-input" id="bk-budget" name="budget">
+              <option value="" selected>Not sure yet</option>
+              <option>Under $1,000</option>
+              <option>$1,000 – $2,500</option>
+              <option>$2,500 – $5,000</option>
+              <option>$5,000 – $10,000</option>
+              <option>$10,000+</option>
+            </select>
+          </div>
+          <div class="bf-group">
+            <label class="bf-label" for="bk-timeline">Desired Timeline</label>
+            <select class="bf-input" id="bk-timeline" name="timeline">
+              <option value="" selected>Flexible</option>
+              <option>ASAP (rush)</option>
+              <option>2–4 weeks</option>
+              <option>1–2 months</option>
+              <option>2–3 months</option>
+              <option>3+ months</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <button type="submit" class="bf-submit">→ SUBMIT BOOKING REQUEST</button>
+    </form>
+  </div>
+</div>
+
+<div class="bk-hud">HUMYNEX // BOOKING SYSTEM</div>
+
+<script>
+(function () {
+  // Pre-select plan from URL param if coming from a pricing card
+  const params = new URLSearchParams(location.search);
+  const planParam = params.get('plan');
+  if (planParam) {
+    document.querySelectorAll('input[name="plan"]').forEach(r => {
+      if (r.value.toLowerCase().includes(planParam.toLowerCase())) {
+        r.checked = true;
+        r.closest('.bf-plan').classList.add('selected');
+      }
+    });
+  }
+
+  // Set min date to today
+  const dateInput = document.getElementById('bk-date');
+  if (dateInput) {
+    const today = new Date().toISOString().split('T')[0];
+    dateInput.setAttribute('min', today);
+  }
+
+  // Form success UX
+  const form = document.getElementById('bk-form');
+  const success = document.getElementById('bk-success');
+  if (form) {
+    form.addEventListener('submit', () => {
+      setTimeout(() => {
+        if (form) form.style.display = 'none';
+        if (success) success.style.display = 'block';
+      }, 600);
+    });
+  }
+})();
+</script>
+</body>
+</html>
