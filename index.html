@@ -3,19 +3,27 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-Content-Type-Options" content="nosniff" />
+  <meta http-equiv="X-Frame-Options" content="DENY" />
+  <meta name="referrer" content="strict-origin-when-cross-origin" />
+  <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=(), payment=()" />
   <title>HUMYNEX — Human × Technology</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
-      --cyan: #00b4d8;
-      --blue: #0077b6;
-      --purple: #7b2fff;
-      --bio: #f0ece3;
-      --warm: #e8c99a;
-      --bg: #020509;
-      --text: #e8eaf0;
+      /* ── OPTION 3: VOID + ELECTRIC BLUE (active) ── */
+      --cyan:   #00b4ff;
+      --blue:   #60efff;
+      --purple: #3b82f6;
+      --bio:    #f0ece3;
+      --warm:   #e8c99a;
+      --bg:     #080810;
+      --text:   #e2e8f0;
+      /* ── Previous palette (hidden, not deleted) ──
+      --cyan: #0ea5e9; --blue: #2563eb; --purple: #6366f1; --bg: #040407;
+      ── */
     }
     html { scroll-behavior: auto; }
     body { background: var(--bg); color: var(--text); font-family: 'Space Grotesk', sans-serif; overflow-x: hidden; }
@@ -176,11 +184,11 @@
       display: flex; align-items: center; justify-content: center;
       width: 48px; height: 48px;
       border-radius: 999px;
-      background: rgba(10, 15, 30, 0.75);
-      backdrop-filter: blur(14px);
-      -webkit-backdrop-filter: blur(14px);
-      border: 1px solid rgba(0, 180, 216, 0.45);
-      box-shadow: 0 0 10px rgba(0,180,216,0.2), inset 0 0 8px rgba(0,180,216,0.05);
+      background: linear-gradient(135deg, rgba(255,255,255,0.09), rgba(255,255,255,0.03));
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255,255,255,0.10);
+      box-shadow: 0 4px 24px rgba(0,0,0,0.40), inset 0 1px 0 rgba(255,255,255,0.07);
       text-decoration: none;
       overflow: hidden;
       transition: width 0.45s cubic-bezier(0.4,0,0.2,1),
@@ -247,6 +255,65 @@
       transform: scale(1);
       opacity: 1;
     }
+
+    /* Mobile hamburger — hidden on desktop, shown at ≤420px */
+    #nav-hamburger {
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 5px;
+      width: 44px; height: 44px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, rgba(255,255,255,0.09), rgba(255,255,255,0.03));
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255,255,255,0.10);
+      box-shadow: 0 4px 24px rgba(0,0,0,0.40);
+      cursor: pointer;
+      padding: 0;
+      transition: border-color 0.2s;
+      touch-action: manipulation;
+    }
+    #nav-hamburger span {
+      display: block;
+      width: 18px; height: 2px;
+      background: rgba(0, 210, 255, 0.9);
+      border-radius: 2px;
+      transition: transform 0.3s ease, opacity 0.3s ease;
+    }
+    body.nav-open #nav-hamburger span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+    body.nav-open #nav-hamburger span:nth-child(2) { opacity: 0; }
+    body.nav-open #nav-hamburger span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+    /* Mobile nav overlay */
+    #mobile-nav {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      background: rgba(8, 8, 16, 0.97);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      z-index: 19;
+      padding: 76px 20px 24px;
+      flex-direction: column;
+      gap: 10px;
+    }
+    body.nav-open #mobile-nav { display: flex; }
+    .mob-link {
+      display: flex; align-items: center; gap: 14px;
+      padding: 14px 18px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, rgba(255,255,255,0.08), rgba(255,255,255,0.02));
+      border: 1px solid rgba(255,255,255,0.08);
+      text-decoration: none; color: #fff;
+      font-family: 'Space Mono', monospace;
+      font-size: 11px; font-weight: 700;
+      letter-spacing: 0.15em; text-transform: uppercase;
+      touch-action: manipulation;
+    }
+    .mob-link svg { width: 18px; height: 18px; color: rgba(0,210,255,0.9); flex-shrink: 0; }
 
     /* Section text */
     .section-text {
@@ -412,9 +479,9 @@
 
     /* Trust Stats Bar */
     #trust-bar {
-      position: fixed; bottom: 9%; left: 50%;
+      position: fixed; bottom: 12%; left: 50%;
       transform: translateX(-50%) translateY(20px);
-      z-index: 15; text-align: center;
+      z-index: 17; text-align: center;
       opacity: 0; transition: opacity 0.7s ease, transform 0.7s ease;
       pointer-events: none; white-space: nowrap;
     }
@@ -522,8 +589,7 @@
     }
     .ts-dot.active { width: 20px; height: 4px; border-radius: 2px; background: var(--cyan); box-shadow: 0 0 6px var(--cyan); }
 
-    @media(max-width:768px){ #testimonial-swiper { width: min(260px, 88vw); right: 14px; } }
-    @media(max-width:420px){ #testimonial-swiper { display: none; } }
+    /* Mobile swiper positioning handled in the 768px media block below */
 
     /* Progress */
     #progress {
@@ -550,6 +616,16 @@
       height: 1.5px;
       width: var(--len,90px);
       background: linear-gradient(to right, transparent, rgba(255,255,255,0.95));
+      transition: width 0.45s cubic-bezier(0.4,0,0.2,1), opacity 0.4s ease;
+    }
+    .sstar.warp::after {
+      width: 580px !important;
+      opacity: 1 !important;
+      transition: width 0.08s linear !important, opacity 0.08s linear !important;
+    }
+    .sstar.warp {
+      opacity: 0.85 !important;
+      box-shadow: 0 0 6px 2px rgba(255,255,255,0.7), 0 0 14px 3px rgba(100,180,220,0.4) !important;
     }
     @keyframes sstar-fly {
       0%   { opacity:0; transform: translate(var(--x1),var(--y1)); }
@@ -577,7 +653,7 @@
     }
     #vignette {
       position: fixed; inset: 0; z-index: 4; pointer-events: none;
-      background: radial-gradient(ellipse at center, transparent 50%, rgba(2,5,9,0.5) 80%, rgba(2,5,9,0.9) 100%);
+      display: none !important;
     }
     #scanlines {
       position: fixed; inset: 0; z-index: 6; pointer-events: none; opacity: 0.025;
@@ -587,42 +663,39 @@
     /* HUD */
     #hud-tl { display: none; }
 
-    #scroll-hint {
-      position: fixed; bottom: 36px; left: 50%; transform: translateX(-50%);
-      z-index: 20; display: flex; flex-direction: column; align-items: center; gap: 8px;
-      pointer-events: none; transition: opacity 0.5s;
-    }
-    #scroll-hint span { font-family: 'Space Mono', monospace; font-size: 10px; letter-spacing: 0.25em; color: rgba(232,234,240,0.35); text-transform: uppercase; }
-    .scroll-line { width: 1px; height: 36px; background: linear-gradient(to bottom, rgba(0,180,216,0.6), transparent); animation: scrollPulse 2s ease-in-out infinite; }
+    /* OLD scroll-hint — hidden, not deleted */
+    #scroll-hint { display: none !important; }
+    .scroll-line { width: 1px; height: 36px; background: linear-gradient(to bottom, rgba(0,255,135,0.6), transparent); animation: scrollPulse 2s ease-in-out infinite; }
     @keyframes scrollPulse { 0%,100%{opacity:0.3;transform:scaleY(1)} 50%{opacity:1;transform:scaleY(1.2)} }
 
-    /* Hero center block — HUMYNEX code canvas + tagline */
-    /* Hero center — HUMYNEX code canvas + tagline */
+    /* Hero center — tagline sits below the Three.js 3D HUMYNEX text */
     #hero-center-wrap {
       position: fixed;
-      top: 50%; left: 50%;
+      top: 84%; left: 50%;
       transform: translate(-50%, -50%);
-      z-index: 2; pointer-events: none;
-      display: flex; flex-direction: column; align-items: center; gap: 28px;
+      z-index: 9; pointer-events: none;
+      display: flex; flex-direction: column; align-items: center; gap: 16px;
     }
-    #humynex-code { display: block; }
+    /* Digital rain canvas replaced by Three.js 3D text */
+    #humynex-code { display: none !important; }
     #hero-tagline {
-      display: flex; flex-direction: column; align-items: center; gap: 10px;
-      opacity: 0; transition: opacity 0.4s ease;
+      display: flex; flex-direction: column; align-items: center; gap: 8px;
+      opacity: 0; transition: opacity 0.6s ease;
     }
-    .tw-cursor { color: #00d4ff; font-weight: 300; animation: twBlink 0.65s step-end infinite; }
+    .tw-cursor { color: #00b4ff; font-weight: 300; animation: twBlink 0.65s step-end infinite; }
     @keyframes twBlink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
     .tag-top {
       display: flex; align-items: center; gap: 18px;
-      font-family: 'Space Mono', monospace; font-size: 11px;
-      letter-spacing: 0.38em; text-transform: uppercase; color: rgba(255,255,255,0.38);
+      font-family: 'Space Mono', monospace; font-size: 10px;
+      letter-spacing: 0.38em; text-transform: uppercase; color: rgba(255,255,255,0.55);
+      text-shadow: 0 1px 8px rgba(0,0,0,0.8);
     }
-    .tag-dot { color: #00d4ff; opacity: 0.7; }
+    .tag-dot { color: #00b4ff; opacity: 0.7; }
     .tag-bottom {
-      font-family: 'Space Grotesk', sans-serif; font-size: clamp(22px, 3.2vw, 46px);
-      font-weight: 700; letter-spacing: -0.01em; color: rgba(255,255,255,0.92); line-height: 1;
+      font-family: 'Space Grotesk', sans-serif; font-size: clamp(18px, 2.4vw, 36px);
+      font-weight: 600; letter-spacing: -0.01em; color: rgba(255,255,255,0.85); line-height: 1;
     }
-    .tag-hl { color: #00d4ff; text-shadow: 0 0 30px rgba(0,212,255,0.55), 0 0 60px rgba(0,212,255,0.2); }
+    .tag-hl { color: #00b4ff; text-shadow: 0 0 20px rgba(0,180,255,0.5), 0 0 40px rgba(0,180,255,0.2); }
 
     /* Loader */
     #loader {
@@ -1160,7 +1233,7 @@
     }
     #h-slides-wrap.h-vis { opacity: 1; pointer-events: all; }
     #h-slides-track {
-      display: flex; width: 200vw; height: 100%;
+      display: flex; width: 400vw; height: 100%;
       transition: transform 0.75s cubic-bezier(0.77, 0, 0.175, 1);
       will-change: transform;
     }
@@ -1286,108 +1359,1110 @@
       font-family: 'Space Mono', monospace; font-size: 9px;
       letter-spacing: 0.3em; color: rgba(255,255,255,0.26);
     }
-    /* Mobile */
+
+    /* ── 2026 WORK SECTION ENHANCEMENTS ───────────────────── */
+    #h-bg-canvas {
+      position: absolute; inset: 0; z-index: 0;
+      width: 100%; height: 100%; pointer-events: none;
+    }
+    /* Giant editorial ghost number */
+    .h-ghost-num {
+      position: absolute; left: 4%; top: 50%;
+      transform: translateY(-58%);
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(150px, 21vw, 300px);
+      font-weight: 700; line-height: 1;
+      color: var(--hc, #00b4d8); opacity: 0.038;
+      letter-spacing: -0.06em;
+      z-index: 1; pointer-events: none; user-select: none;
+      transition: opacity 1.4s ease;
+    }
+    .h-slide.h-on .h-ghost-num { opacity: 0.072; }
+    /* Ambient orb behind the preview area */
+    .h-orb {
+      position: absolute; right: -6%; top: 50%;
+      transform: translateY(-50%);
+      width: min(660px, 50vw); aspect-ratio: 1;
+      background: radial-gradient(ellipse at center,
+        color-mix(in srgb, var(--hc, #00b4d8) 18%, transparent) 0%,
+        transparent 62%);
+      z-index: 1; pointer-events: none;
+      animation: orb-breathe 5s ease-in-out infinite;
+    }
+    @keyframes orb-breathe {
+      0%, 100% { opacity: 0.5;  transform: translateY(-50%) scale(1.0); }
+      50%       { opacity: 0.9;  transform: translateY(-50%) scale(1.12); }
+    }
+    /* Small metadata line above counter */
+    .h-meta {
+      display: block; font-family: 'Space Mono', monospace;
+      font-size: 7px; letter-spacing: 0.5em;
+      color: rgba(255,255,255,0.16); text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+    /* Short accent rule between tagline and description */
+    .h-divider {
+      width: 36px; height: 1px;
+      background: var(--hc, #00b4d8); opacity: 0.45;
+      margin-bottom: 18px;
+    }
+    /* Perspective depth on the preview card */
+    .h-slide { perspective: 1400px; }
+    .h-preview {
+      transform: translateY(-50%) rotateY(-5deg) rotateX(1deg);
+    }
+    .h-slide.h-on .h-preview {
+      transform: translateY(-50%) rotateY(-3deg) rotateX(0.5deg);
+      transition: transform 1.1s ease, box-shadow 1s ease;
+    }
+    /* Vertical left accent line */
+    .h-content::before {
+      content: '';
+      position: absolute; left: -20px; top: 10%; bottom: 10%;
+      width: 1px;
+      background: linear-gradient(to bottom, transparent, var(--hc, #00b4d8) 30%, var(--hc, #00b4d8) 70%, transparent);
+      opacity: 0.28;
+    }
+    /* Mobile — stack text above video */
     @media (max-width: 768px) {
-      .h-preview { display: none; }
-      .h-content { width: 90%; padding: 0 6%; }
-      .h-title { font-size: clamp(30px, 9vw, 52px); }
-      .h-desc { font-size: 12px; }
+      .h-slide { flex-direction: column; justify-content: flex-start; padding: 76px 0 60px; align-items: flex-start; }
+      .h-slide::before { background: linear-gradient(180deg, rgba(2,5,9,0.93) 0%, rgba(2,5,9,0.72) 55%, rgba(2,5,9,0.30) 100%); }
+      .h-content { width: 90%; padding: 0 5%; position: relative; }
+      .h-content::before { display: none; }
+      .h-ghost-num { display: none; }
+      .h-preview { transform: none !important; }
+      .h-title { font-size: clamp(26px, 7.5vw, 46px); }
+      .h-desc { font-size: 12px; margin-bottom: 14px; max-width: 100%; }
+      .h-pills { margin-bottom: 14px; }
+      .h-preview {
+        position: relative;
+        right: auto; top: auto; transform: none;
+        width: 90%; height: auto;
+        aspect-ratio: 16/9;
+        max-height: 36vh;
+        margin: 14px 5% 0;
+        flex-shrink: 0;
+      }
+      .h-cs-grid { display: none !important; }
+      #h-footer { padding: 14px 5%; }
     }
 
     /* ═══════════════════════════════════════════════════════
-       MOBILE RESPONSIVE — 768px and below
+       TOUCH DEVICES — prevent pill nav from expanding on tap
+       ═══════════════════════════════════════════════════════ */
+    @media (hover: none) and (pointer: coarse) {
+      #nav-links li a,
+      #nav-links li a:hover {
+        width: 44px !important;
+        border-color: rgba(255,255,255,0.10) !important;
+        box-shadow: 0 4px 24px rgba(0,0,0,0.40), inset 0 1px 0 rgba(255,255,255,0.07) !important;
+        transition: opacity 0.15s !important;
+      }
+      .pill-label { opacity: 0 !important; transform: scale(0) !important; }
+      .pill-icon { transform: scale(1) !important; opacity: 1 !important; }
+      #nav-links li a:active { opacity: 0.65; }
+    }
+
+    /* ═══════════════════════════════════════════════════════
+       TABLET — 768px and below
        ═══════════════════════════════════════════════════════ */
     @media (max-width: 768px) {
-      /* Nav */
-      #nav { padding: 14px 20px; }
-      #nav-links { gap: 6px; }
-      #nav-links li a { font-size: 8px; letter-spacing: 0.1em; }
-      #logo-wordmark { font-size: 11px; letter-spacing: 0.18em; }
 
-      /* Scroll hint */
-      #scroll-hint { bottom: 24px; font-size: 8px; }
+      /* ── Nav: logo left, pill icons right ── */
+      #nav { padding: 14px 18px; }
+      #nav-links { gap: 7px; }
+      #nav-links li a { width: 42px; height: 42px; }
+      .pill-icon svg { width: 16px; height: 16px; }
+      #nav-x-canvas { width: 58px; height: 58px; }
+      #logo-wordmark { font-size: 10px; letter-spacing: 0.18em; }
 
-      /* HUD top-left */
+      /* ── Progress / HUD ── */
+      #progress { right: 10px; gap: 8px; }
       #hud-tl { font-size: 7px; top: 12px; left: 12px; }
+      #scroll-hint { bottom: 20px; font-size: 8px; }
 
-      /* Progress dots */
-      #progress { right: 12px; gap: 8px; }
+      /* ── Hero text — readable, not overwhelming ── */
+      #hero-text { padding: 0 22px; max-width: 100%; }
+      #hero-text h1 { font-size: clamp(34px, 8.5vw, 58px); line-height: 1.05; }
+      #hero-text p { font-size: 11px; margin-top: 10px; letter-spacing: 0.14em; }
 
-      /* Hero text block */
-      #hero-text { padding: 0 18px; max-width: 100%; }
-
-      /* Merge text */
-      #merge-text { padding: 0 18px; }
-
-      /* Services text */
-      #services-text { left: 18px; right: 18px; bottom: 16%; max-width: 100%; }
-
-      /* AI world text */
-      #aiworld-text { left: 18px; right: 18px; }
+      /* ── Section overlays — full width, padded ── */
+      #merge-text { padding: 0 22px; }
+      #services-text { left: 22px; right: 22px; bottom: 14%; max-width: 100%; }
+      #aiworld-text { left: 22px; right: 22px; }
       #aiworld-label { font-size: 8px; }
+      #pricing-text { left: 22px; right: 22px; }
+      #unified-text { left: 22px; right: 22px; padding: 0; }
 
-      /* Pricing text */
-      #pricing-text { left: 18px; right: 18px; }
+      /* ── CTAs — bottom corners ── */
+      #booking-cta { bottom: 18px; right: 16px; }
+      #contact-trigger { right: 16px; bottom: 72px; }
 
-      /* Unified text */
-      #unified-text { left: 18px; right: 18px; padding: 0; }
-
-      /* Booking CTA */
-      #booking-cta { bottom: 20px; right: 18px; }
-
-      /* Contact trigger */
-      #contact-trigger { right: 18px; bottom: 80px; }
-
-      /* Portfolio info cards — stack in 2 cols on mobile */
+      /* ── Portfolio ── */
       #portfolio-info { gap: 10px; padding: 0 14px; }
       .proj-float-card { width: calc(50vw - 22px); padding: 12px 10px; }
       .pfc-title { font-size: 12px; }
       .pfc-desc { font-size: 9px; }
 
-      /* Work gallery — single column */
-      #work-gallery {
-        grid-template-columns: 1fr;
-        width: 88vw;
-        gap: 10px;
-        top: 50%;
-      }
+      /* ── Work gallery ── */
+      #work-gallery { grid-template-columns: 1fr; width: 88vw; gap: 10px; top: 50%; }
       .work-card { height: 140px; }
 
-      /* Project modal */
-      #modal-inner {
-        width: 96vw;
-        padding: 24px 18px;
-        max-height: 88vh;
-        overflow-y: auto;
-      }
+      /* ── Modal ── */
+      #modal-inner { width: 96vw; padding: 22px 18px; max-height: 88vh; overflow-y: auto; }
       #modal-title { font-size: 22px; }
       #modal-desc { font-size: 11px; }
       #modal-video { height: 180px; }
 
-      /* Pricing overlay */
-      #pricing-overlay { padding: 0 12px; }
-      .pgc-card { min-width: 0; width: 100%; max-width: 320px; padding: 24px 18px; }
-      .pgc-price { font-size: 30px; }
+      /* ── Pricing overlay: starts below nav, scrolls above testimonial sheet ── */
+      #pricing-overlay {
+        justify-content: flex-start;
+        align-items: center;
+        padding: 150px 14px 240px;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+        overscroll-behavior: contain;
+      }
+      .pg-wrap { width: 100%; max-width: 100%; padding: 0; gap: 8px; }
+      .pg-header { text-align: center; margin-bottom: 4px; }
+      .pg-title { font-size: clamp(15px, 4vw, 20px); }
+      .pg-sub { font-size: 7px; margin-top: 3px; letter-spacing: 0.18em; }
+      .pg-cards { flex-direction: column; align-items: stretch; gap: 7px; width: 100%; }
+      .pgc { min-width: 0; width: 100%; max-width: 100%; padding: 12px 13px; flex: none; border-radius: 10px; }
+      .pgc--featured { transform: none !important; }
+      .pgc--featured:hover { transform: none; }
+      .pgc-badge { font-size: 7px; padding: 2px 8px; top: 8px; right: 8px; }
+      .pgc-name { font-size: 16px; margin-bottom: 2px; }
+      .pgc-desc { font-size: 9px; margin-bottom: 6px; line-height: 1.35; }
+      .pgc-price { font-size: 22px; }
+      .pgc-period { font-size: 9px; }
+      .pgc-price-row { margin-bottom: 6px; gap: 3px; }
+      .pgc-divider { margin-bottom: 6px; }
+      .pgc-features { gap: 3px; font-size: 9px; margin-bottom: 8px; }
+      .pgc-features li { gap: 5px; }
+      .pgc-check { width: 10px; height: 10px; flex-shrink: 0; }
+      .pgc-btn { padding: 9px 10px; font-size: 10px; border-radius: 7px; }
 
-      /* Trust bar */
-      #trust-bar { flex-wrap: wrap; gap: 12px; padding: 0 12px; font-size: 8px; }
+      /* ── Testimonial swiper — bottom sheet on mobile, own space, no overlap ── */
+      #testimonial-swiper {
+        top: auto !important;
+        bottom: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        width: 100% !important;
+        border-radius: 20px 20px 0 0;
+        background: rgba(8, 8, 16, 0.95);
+        backdrop-filter: blur(24px);
+        -webkit-backdrop-filter: blur(24px);
+        border-top: 1px solid rgba(255,255,255,0.12);
+        border-left: none;
+        border-right: none;
+        border-bottom: none;
+        padding: 14px 16px 20px;
+        z-index: 20 !important;
+        transform: none !important;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.4s ease;
+      }
+      #testimonial-swiper.visible {
+        opacity: 1 !important;
+        pointer-events: auto;
+        transform: none !important;
+      }
+      .ts-stack { height: 180px; }
 
-      /* Testimonial card */
-      #testimonial-card { width: min(260px, 88vw); right: 14px; }
+      /* ── Other floating elements — hidden on mobile ── */
+      #testimonial-card { display: none; }
+
+      /* ── Trust bar — mobile responsive ── */
+      #trust-bar {
+        white-space: normal;
+        width: calc(100% - 32px);
+        bottom: 10%;
+      }
+      .trust-bar-inner {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 10px 16px;
+        padding: 10px 14px;
+      }
+      .trust-stat-num { font-size: 16px; }
+      .trust-stat-label { font-size: 7px; letter-spacing: 0.12em; }
+      .trust-div { display: none; }
     }
 
-    /* Very small phones — 420px and below */
+    /* ═══════════════════════════════════════════════════════
+       PHONE — 420px and below
+       ═══════════════════════════════════════════════════════ */
     @media (max-width: 420px) {
-      #nav-links { display: none; }
-      #nav { padding: 12px 16px; }
+
+      /* ── Nav: logo left, 4 icon pills right, NO hamburger ── */
+      #nav { padding: 11px 14px; }
+      #nav-hamburger { display: none; }
+      #nav-links { display: flex !important; gap: 5px; }
+      #nav-links li a { width: 44px !important; height: 44px; }
+      .pill-icon svg { width: 14px; height: 14px; }
+      #nav-x-canvas { width: 44px; height: 44px; }
+      #logo-wordmark { font-size: 8px; letter-spacing: 0.12em; }
+
+      /* ── Hero ── */
+      #hero-text h1 { font-size: clamp(28px, 8vw, 46px); }
+      #hero-text p { font-size: 10px; }
+
+      /* ── Portfolio / Gallery ── */
       #portfolio-info { display: none; }
       #work-gallery { grid-template-columns: 1fr; width: 92vw; }
-      .work-card { height: 120px; }
-      #modal-inner { padding: 20px 14px; }
-      #pricing-overlay { align-items: flex-start; padding-top: 80px; overflow-y: auto; }
-      .pgc-price { font-size: 26px; }
-      #testimonial-card { display: none; }
-      #trust-bar { display: none; }
+      .work-card { height: 116px; }
+
+      /* ── Modal ── */
+      #modal-inner { padding: 18px 14px; }
+
+      /* ── Pricing 420px: ultra-compact, everything visible, scrollable ── */
+      #pricing-overlay { padding: 135px 9px 230px; }
+      .pg-header { display: block; text-align: center; }
+      .pg-title { font-size: clamp(13px, 3.8vw, 17px); }
+      .pg-sub { font-size: 6.5px; }
+      .pg-wrap { gap: 6px; }
+      .pg-cards { gap: 6px; }
+      .pgc { padding: 10px 11px; border-radius: 8px; }
+      .pgc-name { font-size: 14px; margin-bottom: 1px; }
+      .pgc-price { font-size: 20px; }
+      .pgc-period { font-size: 8px; }
+      .pgc-desc { font-size: 8.5px; margin-bottom: 5px; line-height: 1.3; }
+      .pgc-price-row { margin-bottom: 5px; }
+      .pgc-divider { margin-bottom: 5px; }
+      .pgc-features { gap: 2px; font-size: 8.5px; margin-bottom: 7px; }
+      .pgc-check { width: 9px; height: 9px; }
+      .pgc-btn { padding: 8px 10px; font-size: 9.5px; border-radius: 6px; }
+    }
+
+    /* Touch-action on all interactive elements */
+    #nav-links li a, .hero-cta-btn, .hero-cta-ghost,
+    .booking-cta-btn, #contact-trigger, .pgc-cta, .svo-card { touch-action: manipulation; }
+
+    /* Safe area insets for notched phones */
+    @supports (padding-top: env(safe-area-inset-top)) {
+      #nav { padding-top: max(26px, env(safe-area-inset-top)); }
+      #booking-cta { bottom: max(20px, calc(env(safe-area-inset-bottom) + 8px)); }
+      #contact-trigger { bottom: max(80px, calc(env(safe-area-inset-bottom) + 60px)); }
+      #progress { right: max(16px, calc(env(safe-area-inset-right) + 8px)); }
+      #mobile-nav { padding-top: max(76px, calc(env(safe-area-inset-top) + 60px)); }
+    }
+    /* FIX 5 (mobile only): slide footer clears iPhone home bar */
+    @media (max-width: 768px) {
+      @supports (padding-bottom: env(safe-area-inset-bottom)) {
+        #h-footer { padding-bottom: max(16px, calc(env(safe-area-inset-bottom) + 8px)); }
+        #booking-cta { bottom: max(18px, calc(env(safe-area-inset-bottom) + 10px)); left: auto; transform: none; }
+        #contact-trigger { bottom: max(66px, calc(env(safe-area-inset-bottom) + 56px)); }
+      }
+    }
+
+    /* ═══════════════════════════════════════════════════════
+       HERO ENHANCEMENTS — Option 2 Void + Jade
+    ═══════════════════════════════════════════════════════ */
+
+    /* Available signal — top center pulsing dot */
+    #hero-available {
+      position: fixed; top: 16%; left: 50%;
+      transform: translateX(-50%);
+      z-index: 12; display: flex; align-items: center; gap: 9px;
+      font-family: 'Space Mono', monospace; font-size: 8px;
+      letter-spacing: 0.38em; text-transform: uppercase;
+      color: rgba(255,255,255,0.38);
+      transition: opacity 0.8s ease; pointer-events: none;
+      white-space: nowrap;
+    }
+    .havail-dot {
+      width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0;
+      background: #00b4ff;
+      box-shadow: 0 0 8px #00b4ff, 0 0 18px rgba(0,180,255,0.55);
+      animation: availPulse 2.2s ease-in-out infinite;
+    }
+    @keyframes availPulse {
+      0%,100% { box-shadow: 0 0 6px #00b4ff, 0 0 14px rgba(0,180,255,0.45); }
+      50%      { box-shadow: 0 0 12px #00b4ff, 0 0 28px rgba(0,180,255,0.8), 0 0 48px rgba(0,180,255,0.25); }
+    }
+
+    /* Eyebrow label — above 3D text */
+    #hero-eyebrow {
+      position: fixed; top: 23%; left: 50%;
+      transform: translateX(-50%);
+      z-index: 12; text-align: center;
+      font-family: 'Space Mono', monospace; font-size: 8px;
+      letter-spacing: 0.55em; text-transform: uppercase;
+      color: rgba(255,255,255,0.18);
+      transition: opacity 0.8s ease; pointer-events: none;
+      white-space: nowrap;
+    }
+
+    /* CTA buttons inside hero-center-wrap */
+    .hero-cta-row {
+      display: flex; gap: 14px; align-items: center;
+      margin-top: 30px; pointer-events: all;
+      flex-wrap: wrap; justify-content: center;
+    }
+    .hero-cta-primary {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 13px 30px; border-radius: 999px;
+      background: linear-gradient(135deg, #0080ff, #00b4ff); border: none;
+      color: #fff; font-family: 'Space Mono', monospace;
+      font-size: 10px; font-weight: 700; letter-spacing: 0.22em;
+      text-transform: uppercase; text-decoration: none; cursor: pointer;
+      box-shadow: 0 0 28px rgba(0,180,255,0.45), 0 4px 18px rgba(0,0,0,0.55);
+      transition: all 0.28s ease;
+    }
+    .hero-cta-primary:hover {
+      background: linear-gradient(135deg, #1a9fff, #40d0ff);
+      box-shadow: 0 0 50px rgba(0,180,255,0.75), 0 8px 32px rgba(0,0,0,0.5);
+      transform: translateY(-2px);
+    }
+    .hero-cta-ghost {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 12px 26px; border-radius: 999px;
+      background: rgba(0,180,255,0.06);
+      border: 1px solid rgba(0,180,255,0.20);
+      color: rgba(255,255,255,0.65); font-family: 'Space Mono', monospace;
+      font-size: 10px; letter-spacing: 0.18em;
+      text-transform: uppercase; text-decoration: none; cursor: pointer;
+      backdrop-filter: blur(14px); transition: all 0.28s ease;
+    }
+    .hero-cta-ghost:hover {
+      border-color: rgba(0,180,255,0.55);
+      color: #00b4ff; background: rgba(0,180,255,0.10);
+    }
+
+    /* Hero mini trust line */
+    .hero-trust-mini {
+      display: flex; gap: 14px; align-items: center;
+      margin-top: 36px;
+      font-family: 'Space Mono', monospace; font-size: 8px;
+      letter-spacing: 0.2em; text-transform: uppercase;
+      color: rgba(255,255,255,0.55); white-space: nowrap;
+    }
+    .htrust-sep { color: rgba(0,180,255,0.70); font-size: 10px; }
+
+    /* Gravitational glow ring around text zone */
+    #hero-ring {
+      position: fixed; top: 48%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 60vw; height: 24vw; min-width: 520px;
+      border-radius: 50%;
+      border: 1px solid rgba(0,180,255,0.10);
+      box-shadow:
+        0 0 80px rgba(0,180,255,0.06) inset,
+        0 0 40px rgba(0,180,255,0.04);
+      z-index: 8; pointer-events: none;
+      transition: opacity 0.8s ease;
+      animation: ringBreath 4s ease-in-out infinite;
+    }
+    @keyframes ringBreath {
+      0%,100% { border-color: rgba(0,180,255,0.07); box-shadow: 0 0 80px rgba(0,180,255,0.04) inset; }
+      50%      { border-color: rgba(0,180,255,0.16); box-shadow: 0 0 120px rgba(0,180,255,0.10) inset, 0 0 60px rgba(0,180,255,0.05); }
+    }
+
+    /* Floating tech micro-tags */
+    #hero-tags {
+      position: fixed; inset: 0; z-index: 3;
+      pointer-events: none; transition: opacity 0.8s ease;
+    }
+    .hero-tag {
+      position: absolute;
+      font-family: 'Space Mono', monospace; font-size: 7px;
+      letter-spacing: 0.18em; text-transform: uppercase;
+      padding: 5px 13px; border-radius: 999px;
+      background: rgba(0,180,255,0.06);
+      border: 1px solid rgba(0,180,255,0.18);
+      color: rgba(0,180,255,0.55);
+      animation: tagFloat var(--dur, 7s) ease-in-out infinite;
+      animation-delay: var(--del, 0s);
+    }
+    @keyframes tagFloat {
+      0%,100% { transform: translateY(0px) translateX(0px); }
+      30%      { transform: translateY(var(--dy1,-9px)) translateX(var(--dx1,5px)); }
+      65%      { transform: translateY(var(--dy2,6px)) translateX(var(--dx2,-7px)); }
+    }
+
+    /* New scroll indicator */
+    #hero-scroll-ind {
+      position: fixed; bottom: 5%; left: 50%;
+      transform: translateX(-50%);
+      z-index: 12; display: flex; flex-direction: column;
+      align-items: center; gap: 9px;
+      transition: opacity 0.8s ease; pointer-events: none;
+    }
+    .hsi-label {
+      font-family: 'Space Mono', monospace; font-size: 7px;
+      letter-spacing: 0.42em; text-transform: uppercase;
+      color: rgba(255,255,255,0.18);
+    }
+    .hsi-bar {
+      width: 1px; height: 44px;
+      background: linear-gradient(to bottom, rgba(0,180,255,0.65), transparent);
+      animation: hsiDrop 2s ease-in-out infinite;
+    }
+    @keyframes hsiDrop {
+      0%   { opacity: 0.3; transform: scaleY(0.8) translateY(-4px); }
+      50%  { opacity: 1;   transform: scaleY(1.1) translateY(0); }
+      100% { opacity: 0.3; transform: scaleY(0.8) translateY(4px); }
+    }
+
+    /* ── HERO ENERGY VIDEO ───────────────────────────────────── */
+    #hero-video {
+      position: fixed; inset: 0;
+      z-index: 0;
+      width: 100%; height: 100%;
+      object-fit: cover;
+      will-change: transform, opacity;
+      transform: scale(1.15);
+      pointer-events: none;
+      transform-style: preserve-3d;
+    }
+
+    /* ── HERO ENERGY CANVAS (mouse-pulse overlay) ───────────── */
+    #hero-energy-canvas {
+      position: fixed; inset: 0;
+      z-index: 7;
+      pointer-events: none;
+      width: 100%; height: 100%;
+    }
+
+    /* ── INTERACTIVE BUBBLES — top right, hero zone ──────────── */
+    #hero-bubbles {
+      position: fixed; top: 110px; right: 48px;
+      z-index: 18; display: flex; flex-direction: column;
+      align-items: flex-end; gap: 10px;
+      pointer-events: all;
+      transition: opacity 0.8s ease;
+    }
+    .hbubble {
+      display: flex; align-items: center; gap: 10px;
+      padding: 8px 18px 8px 14px;
+      border-radius: 999px;
+      background: rgba(0,120,255,0.06);
+      border: 1px solid rgba(0,180,255,0.18);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      cursor: pointer;
+      transition: all 0.38s cubic-bezier(0.34,1.36,0.64,1);
+      white-space: nowrap;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.06);
+    }
+    .hbubble:hover {
+      background: rgba(0,140,255,0.14);
+      border-color: rgba(0,180,255,0.60);
+      box-shadow: 0 0 22px rgba(0,180,255,0.25), 0 4px 20px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.10);
+      transform: translateX(-5px) scale(1.03);
+    }
+    .hbubble-dot {
+      width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0;
+      background: #00b4ff;
+      box-shadow: 0 0 6px #00b4ff, 0 0 12px rgba(0,180,255,0.5);
+      animation: bubbleDotPulse var(--bp-dur, 2s) ease-in-out var(--bp-del, 0s) infinite;
+    }
+    @keyframes bubbleDotPulse {
+      0%,100% { transform: scale(1); opacity: 0.7; }
+      50% { transform: scale(1.6); opacity: 1; box-shadow: 0 0 12px #00b4ff, 0 0 24px rgba(0,180,255,0.6); }
+    }
+    .hbubble-label {
+      font-family: 'Space Mono', monospace; font-size: 8px;
+      letter-spacing: 0.22em; text-transform: uppercase;
+      color: rgba(200,230,255,0.50);
+      transition: color 0.3s;
+    }
+    .hbubble:hover .hbubble-label { color: rgba(0,180,255,0.95); }
+
+    @media (max-width: 768px) { #hero-bubbles { right: 16px; top: 90px; } }
+    @media (max-width: 420px) { #hero-bubbles { display: none; } }
+
+    /* ── HUMYNEX CLICK HIT AREA ─────────────────────────────────── */
+    #hero-humynex-hit {
+      position: fixed;
+      top: 38%; left: 50%;
+      transform: translateX(-50%);
+      width: min(72vw, 920px); height: 24%;
+      z-index: 10;
+      cursor: pointer;
+      border-radius: 8px;
+      transition: opacity 0.8s ease;
+    }
+    #hero-humynex-hit::before {
+      content: '';
+      position: absolute; inset: 0;
+      border-radius: 8px;
+      background: radial-gradient(ellipse at center, rgba(0,180,255,0.055) 0%, transparent 70%);
+      opacity: 0;
+      transition: opacity 0.35s ease;
+    }
+    #hero-humynex-hit:hover::before { opacity: 1; }
+
+    /* ── HUMYNEX POP-UP MODAL ───────────────────────────────────── */
+    #hero-humynex-popup {
+      position: fixed; inset: 0;
+      z-index: 500;
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.4s cubic-bezier(0.25,0.46,0.45,0.94);
+    }
+    #hero-humynex-popup.hpop-open {
+      opacity: 1; pointer-events: all;
+    }
+    .hpop-bg {
+      position: absolute; inset: 0;
+      background: rgba(8,8,16,0.75);
+      backdrop-filter: blur(28px);
+      -webkit-backdrop-filter: blur(28px);
+    }
+    .hpop-card {
+      position: relative; z-index: 1;
+      width: min(460px, 90vw);
+      padding: 48px 42px 44px;
+      background: linear-gradient(145deg, rgba(0,30,80,0.60), rgba(8,8,20,0.88));
+      border: 1px solid rgba(0,180,255,0.28);
+      border-radius: 22px;
+      box-shadow: 0 0 90px rgba(0,180,255,0.10), 0 40px 80px rgba(0,0,0,0.65),
+                  inset 0 1px 0 rgba(255,255,255,0.07), inset 0 0 40px rgba(0,120,255,0.04);
+      text-align: center;
+      transform: scale(0.88) translateY(24px);
+      transition: transform 0.45s cubic-bezier(0.34,1.36,0.64,1);
+    }
+    #hero-humynex-popup.hpop-open .hpop-card {
+      transform: scale(1) translateY(0);
+    }
+    .hpop-card::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(0,180,255,0.7), rgba(96,239,255,0.5), transparent);
+      border-radius: 22px 22px 0 0;
+    }
+    .hpop-close {
+      position: absolute; top: 16px; right: 18px;
+      background: none; border: 1px solid rgba(255,255,255,0.10);
+      color: rgba(255,255,255,0.38); font-size: 13px;
+      width: 32px; height: 32px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; transition: all 0.2s;
+    }
+    .hpop-close:hover { border-color: rgba(0,180,255,0.5); color: #00b4ff; }
+    .hpop-x-icon {
+      width: 56px; height: 56px; position: relative; margin: 0 auto 20px;
+    }
+    .hpop-bar {
+      position: absolute; width: 8px; height: 52px;
+      top: 2px; left: 50%; transform-origin: center;
+      border-radius: 3px;
+    }
+    .hpop-bar-1 {
+      transform: translateX(-50%) rotate(45deg);
+      background: linear-gradient(180deg, #0060cc, #00b4ff);
+      box-shadow: 0 0 18px #00b4ff, 0 0 36px rgba(0,180,255,0.3);
+    }
+    .hpop-bar-2 {
+      transform: translateX(-50%) rotate(-45deg);
+      background: linear-gradient(180deg, #00b4ff, #60efff);
+      box-shadow: 0 0 18px #00b4ff, 0 0 36px rgba(0,180,255,0.3);
+    }
+    .hpop-center-glow {
+      position: absolute; top: 50%; left: 50%;
+      transform: translate(-50%,-50%);
+      width: 12px; height: 12px;
+      background: #fff; border-radius: 50%;
+      box-shadow: 0 0 12px #fff, 0 0 24px #00b4ff, 0 0 50px rgba(0,180,255,0.6);
+      animation: hpopGlow 1.8s ease-in-out infinite;
+    }
+    @keyframes hpopGlow {
+      0%,100% { transform: translate(-50%,-50%) scale(1); opacity: 0.9; }
+      50% { transform: translate(-50%,-50%) scale(1.35); opacity: 1; box-shadow: 0 0 18px #fff, 0 0 36px #00b4ff, 0 0 70px rgba(0,180,255,0.7); }
+    }
+    .hpop-name {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 34px; font-weight: 700; letter-spacing: 0.14em;
+      background: linear-gradient(135deg, #ffffff 0%, #00b4ff 50%, #60efff 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+      margin-bottom: 6px;
+    }
+    .hpop-sub {
+      font-family: 'Space Mono', monospace; font-size: 9px;
+      letter-spacing: 0.35em; text-transform: uppercase;
+      color: rgba(0,180,255,0.55); margin-bottom: 22px;
+    }
+    .hpop-divider {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(0,180,255,0.25), transparent);
+      margin-bottom: 22px;
+    }
+    .hpop-desc {
+      font-family: 'Space Grotesk', sans-serif; font-size: 14px;
+      line-height: 1.75; color: rgba(232,234,240,0.62);
+      margin-bottom: 30px;
+    }
+    .hpop-btn {
+      display: inline-flex; align-items: center; gap: 10px;
+      padding: 14px 36px; border-radius: 999px;
+      background: linear-gradient(135deg, #0060cc, #00b4ff);
+      color: #fff; text-decoration: none;
+      font-family: 'Space Mono', monospace; font-size: 10px;
+      font-weight: 700; letter-spacing: 0.22em; text-transform: uppercase;
+      box-shadow: 0 0 32px rgba(0,180,255,0.4), 0 8px 24px rgba(0,0,0,0.5);
+      transition: all 0.28s ease;
+    }
+    .hpop-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 0 56px rgba(0,180,255,0.65), 0 12px 32px rgba(0,0,0,0.55);
+    }
+
+    /* ═══════════════════════════════════════════════════════════
+       SERVICES OVERLAY — Premium 5-Discipline Showcase
+       ═══════════════════════════════════════════════════════════ */
+    #services-text { display: none !important; }
+
+    #services-overlay {
+      position: fixed; inset: 0; z-index: 9;
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0; pointer-events: none;
+      padding: 88px 44px 20px;
+      overflow-y: auto;
+    }
+
+    .svo-inner {
+      width: 100%; max-width: 1080px;
+      display: flex; flex-direction: column; gap: 22px;
+    }
+
+    /* Header */
+    .svo-header { text-align: center; }
+    .svo-eyebrow {
+      display: inline-flex; align-items: center; gap: 10px;
+      font-family: 'Space Mono', monospace; font-size: 8px;
+      letter-spacing: 0.44em; text-transform: uppercase;
+      color: rgba(0,180,216,0.55); margin-bottom: 10px;
+    }
+    .svo-eyebrow::before, .svo-eyebrow::after {
+      content: ''; width: 26px; height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(0,180,216,0.4));
+    }
+    .svo-eyebrow::after {
+      background: linear-gradient(90deg, rgba(0,180,216,0.4), transparent);
+    }
+    .svo-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(24px, 3.4vw, 44px);
+      font-weight: 700; line-height: 1.06; letter-spacing: -0.02em;
+      color: #fff; margin-bottom: 7px;
+    }
+    .svo-title span {
+      background: linear-gradient(135deg, #00b4ff, #60efff);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .svo-tagline {
+      font-family: 'Space Grotesk', sans-serif; font-size: 12.5px;
+      color: rgba(232,234,240,0.38); letter-spacing: 0.01em;
+    }
+
+    /* 6-column grid → 3 top + 2 centered bottom */
+    .svo-grid {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 11px;
+    }
+    .svo-card:nth-child(1) { grid-column: 1 / 3; }
+    .svo-card:nth-child(2) { grid-column: 3 / 5; }
+    .svo-card:nth-child(3) { grid-column: 5 / 7; }
+    .svo-card:nth-child(4) { grid-column: 2 / 4; }
+    .svo-card:nth-child(5) { grid-column: 4 / 6; }
+
+    /* Card — pricing-style glass */
+    .svo-card {
+      position: relative; overflow: hidden;
+      background: linear-gradient(135deg, rgba(255,255,255,0.10), rgba(255,255,255,0.04));
+      border: 1px solid rgba(255,255,255,0.10);
+      border-radius: 16px;
+      padding: 19px 17px 15px;
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      box-shadow: 0 8px 40px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.06);
+      transition: transform 0.38s cubic-bezier(0.34,1.36,0.64,1),
+                  box-shadow 0.38s ease, border-color 0.38s ease;
+      cursor: default; will-change: transform;
+    }
+    /* Featured card (Websites) — elevated glass like Growth plan */
+    .svo-card.svo-featured {
+      background: linear-gradient(135deg, rgba(255,255,255,0.17), rgba(255,255,255,0.08));
+      border: 1px solid rgba(0,180,216,0.32);
+      box-shadow: 0 0 0 1px rgba(0,180,216,0.14), 0 12px 60px rgba(0,0,0,0.6), 0 0 80px rgba(0,180,216,0.07);
+    }
+    /* Top accent line */
+    .svo-card::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
+      background: linear-gradient(90deg, transparent, var(--sc,#00b4ff) 35%, var(--sc,#00b4ff) 65%, transparent);
+      opacity: 0.75;
+    }
+    /* Corner color glow */
+    .svo-card::after {
+      content: ''; position: absolute; bottom: -22px; left: -22px;
+      width: 110px; height: 110px; border-radius: 50%;
+      background: radial-gradient(circle, var(--sc,#00b4ff) 0%, transparent 70%);
+      opacity: 0.07; pointer-events: none;
+      transition: opacity 0.38s ease;
+    }
+    .svo-card:hover {
+      transform: translateY(-7px);
+      border-color: rgba(255,255,255,0.18);
+      box-shadow:
+        0 22px 58px rgba(0,0,0,0.72),
+        0 0 0 1px color-mix(in srgb, var(--sc,#00b4ff) 28%, transparent),
+        inset 0 1px 0 rgba(255,255,255,0.12);
+    }
+    .svo-card.svo-featured:hover {
+      box-shadow: 0 0 0 1px rgba(0,180,216,0.28), 0 22px 60px rgba(0,0,0,0.72), 0 0 100px rgba(0,180,216,0.12);
+    }
+    .svo-card:hover::after { opacity: 0.13; }
+
+    /* Holographic shimmer sweep on hover */
+    .svo-shimmer {
+      position: absolute; inset: 0; pointer-events: none;
+      background: linear-gradient(115deg,
+        transparent 30%,
+        rgba(255,255,255,0.06) 50%,
+        transparent 70%);
+      transform: translateX(-100%);
+      transition: transform 0s;
+    }
+    .svo-card:hover .svo-shimmer {
+      transform: translateX(100%);
+      transition: transform 0.65s cubic-bezier(0.25,0.46,0.45,0.94);
+    }
+
+    /* Most Requested badge */
+    .svo-badge {
+      position: absolute; top: 11px; right: 11px;
+      font-family: 'Space Mono', monospace; font-size: 6px;
+      letter-spacing: 0.22em; text-transform: uppercase;
+      color: #00b4ff; background: rgba(0,180,255,0.10);
+      border: 1px solid rgba(0,180,255,0.30);
+      border-radius: 4px; padding: 3px 7px;
+    }
+
+    /* Capability ticker */
+    .svo-ticker-wrap {
+      overflow: hidden; white-space: nowrap;
+      border-top: 1px solid rgba(255,255,255,0.06);
+      padding: 10px 0 2px;
+      mask-image: linear-gradient(90deg, transparent, black 8%, black 92%, transparent);
+      -webkit-mask-image: linear-gradient(90deg, transparent, black 8%, black 92%, transparent);
+    }
+    .svo-ticker {
+      display: inline-block;
+      animation: svoTick 22s linear infinite;
+      font-family: 'Space Mono', monospace; font-size: 7px;
+      letter-spacing: 0.22em; color: rgba(0,180,255,0.38);
+      text-transform: uppercase;
+    }
+    @keyframes svoTick {
+      0%   { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+
+    /* Stagger entrance */
+    @keyframes svoCardIn {
+      from { opacity: 0; transform: translateY(22px) scale(0.97); }
+      to   { opacity: 1; transform: translateY(0) scale(1); }
+    }
+    #services-overlay.svo-live .svo-card {
+      animation: svoCardIn 0.55s cubic-bezier(0.22,1,0.36,1) both;
+    }
+    #services-overlay.svo-live .svo-card:nth-child(1) { animation-delay: 0.00s; }
+    #services-overlay.svo-live .svo-card:nth-child(2) { animation-delay: 0.08s; }
+    #services-overlay.svo-live .svo-card:nth-child(3) { animation-delay: 0.16s; }
+    #services-overlay.svo-live .svo-card:nth-child(4) { animation-delay: 0.24s; }
+    #services-overlay.svo-live .svo-card:nth-child(5) { animation-delay: 0.32s; }
+
+    /* Card internals */
+    .svo-card-head {
+      display: flex; align-items: flex-start;
+      justify-content: space-between; margin-bottom: 10px;
+    }
+    .svo-num {
+      font-family: 'Space Mono', monospace; font-size: 7.5px;
+      letter-spacing: 0.28em; color: var(--sc,#00b4ff);
+      opacity: 0.52; line-height: 1;
+    }
+    .svo-icon { color: var(--sc,#00b4ff); opacity: 0.62;
+      transition: opacity 0.28s ease, transform 0.28s ease; }
+    .svo-icon svg { width: 15px; height: 15px; }
+    .svo-card:hover .svo-icon { opacity: 1; transform: scale(1.12); }
+
+    .svo-name {
+      font-family: 'Space Grotesk', sans-serif; font-size: 18px;
+      font-weight: 700; color: #fff; letter-spacing: -0.01em;
+      margin-bottom: 3px; line-height: 1.1;
+    }
+    .svo-sub-label {
+      font-family: 'Space Mono', monospace; font-size: 7px;
+      letter-spacing: 0.20em; color: var(--sc,#00b4ff);
+      text-transform: uppercase; opacity: 0.78; margin-bottom: 10px;
+    }
+    .svo-divider {
+      height: 1px;
+      background: linear-gradient(90deg, rgba(255,255,255,0.08), rgba(255,255,255,0.03));
+      margin-bottom: 9px;
+    }
+    .svo-features {
+      list-style: none;
+      display: flex; flex-direction: column; gap: 5px;
+      margin-bottom: 13px;
+    }
+    .svo-features li {
+      display: flex; align-items: center; gap: 6px;
+      font-family: 'Space Grotesk', sans-serif; font-size: 11px;
+      color: rgba(232,234,240,0.60); line-height: 1.3;
+    }
+    .svo-features li::before {
+      content: '›'; color: var(--sc,#00b4ff);
+      font-size: 13px; line-height: 1; flex-shrink: 0; opacity: 0.85;
+    }
+    .svo-btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 7px 13px;
+      border: 1px solid color-mix(in srgb, var(--sc,#00b4ff) 35%, transparent);
+      background: color-mix(in srgb, var(--sc,#00b4ff) 7%, transparent);
+      color: var(--sc,#00b4ff);
+      font-family: 'Space Mono', monospace; font-size: 7px;
+      font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase;
+      text-decoration: none; border-radius: 6px;
+      transition: all 0.24s ease; white-space: nowrap;
+    }
+    .svo-btn:hover {
+      background: color-mix(in srgb, var(--sc,#00b4ff) 18%, transparent);
+      border-color: var(--sc,#00b4ff);
+      transform: translateX(4px);
+      box-shadow: 0 0 14px color-mix(in srgb, var(--sc,#00b4ff) 18%, transparent);
+    }
+
+    @media (max-width: 960px) {
+      .svo-grid { grid-template-columns: repeat(4, 1fr); }
+      .svo-card:nth-child(1) { grid-column: 1 / 3; }
+      .svo-card:nth-child(2) { grid-column: 3 / 5; }
+      .svo-card:nth-child(3) { grid-column: 1 / 3; }
+      .svo-card:nth-child(4) { grid-column: 3 / 5; }
+      .svo-card:nth-child(5) { grid-column: 2 / 4; }
+    }
+    @media (max-width: 640px) {
+      #services-overlay { padding: 78px 14px 16px; }
+      .svo-grid { grid-template-columns: repeat(2, 1fr); }
+      .svo-card:nth-child(1),
+      .svo-card:nth-child(2),
+      .svo-card:nth-child(3),
+      .svo-card:nth-child(4),
+      .svo-card:nth-child(5) { grid-column: auto; }
+      .svo-card:nth-child(5) { grid-column: 1 / -1; }
+    }
+    @media (max-width: 400px) {
+      .svo-grid { grid-template-columns: 1fr; }
+      .svo-card:nth-child(n) { grid-column: auto; }
+    }
+
+    /* ═══════════════════════════════════════════════════════
+       MOBILE LAYOUT — Organized, no overlap, own spaces
+       ═══════════════════════════════════════════════════════ */
+    @media (max-width: 768px) {
+
+      /* ── HERO: raise CTA from 84% (too low) to 74%, give it room ── */
+      #hero-center-wrap {
+        top: 74%;
+        width: 100%;
+        padding: 0 18px;
+        box-sizing: border-box;
+      }
+      #hero-eyebrow {
+        top: 28%;
+        font-size: 7px;
+        letter-spacing: 0.30em;
+        white-space: nowrap;
+      }
+      /* FIX 2: Stack CTA buttons vertically — side-by-side is too tight on phone */
+      .hero-cta-row {
+        margin-top: 16px;
+        gap: 10px;
+        justify-content: center;
+        flex-direction: column;
+        align-items: center;
+      }
+      .hero-cta-primary {
+        width: min(80vw, 280px);
+        justify-content: center;
+        padding: 13px 22px;
+        font-size: 9px;
+        letter-spacing: 0.16em;
+      }
+      .hero-cta-ghost {
+        width: min(80vw, 280px);
+        justify-content: center;
+        padding: 12px 18px;
+        font-size: 9px;
+        letter-spacing: 0.13em;
+      }
+      .hero-trust-mini {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 6px 10px;
+        margin-top: 12px;
+        font-size: 7px;
+        letter-spacing: 0.14em;
+      }
+      #hero-scroll-ind { bottom: 3%; }
+      .hsi-bar { height: 28px; }
+      .hsi-label { font-size: 6px; }
+
+      /* ── HUMYNEX 3D text hit-area: smaller on mobile ── */
+      #hero-humynex-hit {
+        width: 86vw;
+        height: 18%;
+        top: 34%;
+      }
+
+      /* ── SERVICES OVERLAY: scrollable, padded, no overflow ── */
+      #services-overlay {
+        padding: 120px 12px 24px;
+        align-items: flex-start;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+        overscroll-behavior: contain;
+      }
+      .svo-inner { gap: 12px; width: 100%; }
+      .svo-header { text-align: center; }
+      .svo-title { font-size: clamp(19px, 5.5vw, 30px); margin-bottom: 5px; }
+      .svo-tagline { font-size: 10px; }
+      .svo-eyebrow { font-size: 7px; letter-spacing: 0.30em; margin-bottom: 8px; }
+      .svo-card {
+        padding: 13px 12px 11px;
+        border-radius: 12px;
+      }
+      .svo-name { font-size: 15px; margin-bottom: 2px; }
+      .svo-sub-label { font-size: 6.5px; margin-bottom: 8px; }
+      .svo-divider { margin-bottom: 7px; }
+      .svo-features { gap: 4px; margin-bottom: 9px; }
+      .svo-features li { font-size: 10px; gap: 5px; }
+      /* FIX 4: Larger touch target for service card buttons */
+      .svo-btn {
+        font-size: 7px;
+        padding: 10px 13px;
+        min-height: 38px;
+        width: 100%;
+        justify-content: center;
+      }
+      .svo-ticker-wrap { padding: 8px 0 0; }
+      .svo-ticker { font-size: 6.5px; }
+      .svo-icon svg { width: 13px; height: 13px; }
+
+      /* ── HORIZONTAL SLIDES (WORK): push content below nav logo ── */
+      .h-slide {
+        padding: 160px 0 50px;
+        justify-content: flex-start;
+        align-items: flex-start;
+      }
+      .h-content { width: 94%; padding: 0 5%; }
+      .h-title { font-size: clamp(24px, 7vw, 42px); }
+      .h-desc {
+        font-size: 11px;
+        line-height: 1.6;
+        margin-bottom: 12px;
+        max-width: 100%;
+      }
+      .h-pills { gap: 5px; margin-bottom: 12px; }
+      .h-pills span { font-size: 7px; padding: 4px 9px; }
+      .h-preview {
+        max-height: 28vh;
+        margin: 12px 5% 0;
+      }
+      #h-footer { padding: 12px 5%; }
+      #h-count { font-size: 8px; }
+      .h-dot { height: 2px; width: 20px; }
+      .h-dot.h-on { width: 40px; }
+
+      /* ── CONTACT MODAL: single-column, phone-comfortable ── */
+      #contact-inner {
+        width: 96vw;
+        padding: 44px 20px 32px;
+      }
+      .cf-row { grid-template-columns: 1fr; gap: 0; }
+      #contact-inner h2 { font-size: 20px !important; }
+      #contact-inner > p { font-size: 10px !important; margin-bottom: 20px !important; }
+
+      /* ── HUMYNEX POPUP: compact on mobile ── */
+      .hpop-card {
+        padding: 36px 22px 28px;
+        border-radius: 16px;
+      }
+      .hpop-name { font-size: 26px; }
+      .hpop-sub { font-size: 8px; margin-bottom: 16px; }
+      .hpop-desc { font-size: 12px; line-height: 1.65; margin-bottom: 20px; }
+      .hpop-btn { padding: 12px 28px; font-size: 9px; }
+      .hpop-x-icon { width: 44px; height: 44px; margin-bottom: 16px; }
+
+      /* FIX 1: Booking CTA — clear desktop centering so it anchors right correctly */
+      #booking-cta {
+        bottom: 16px;
+        right: 14px;
+        left: auto;
+        transform: none;
+      }
+      #contact-trigger { right: 14px; bottom: 64px; }
+
+      /* FIX 5: Work slide dots — clear of iPhone home bar */
+      #h-footer {
+        padding: 12px 5%;
+        padding-bottom: max(14px, env(safe-area-inset-bottom, 14px));
+      }
+
+      /* ── SECTION TEXTS: better mobile font sizes ── */
+      #aiworld-text h2 { font-size: clamp(20px, 5.5vw, 36px); }
+      #pricing-text h2 { font-size: clamp(20px, 5.5vw, 36px); }
+      #merge-text h2 { font-size: clamp(22px, 5vw, 40px); }
+      #unified-text h2 { font-size: clamp(20px, 5.5vw, 36px); }
+
+      /* ── PROGRESS DOTS: keep right-side, tuck in ── */
+      #progress { right: 8px; gap: 6px; }
+    }
+
+    @media (max-width: 420px) {
+
+      /* ── HERO: tiny phone — move CTA up more, hide trust line ── */
+      #hero-center-wrap { top: 70%; }
+      #hero-eyebrow { top: 30%; font-size: 6px; letter-spacing: 0.22em; }
+      .hero-cta-primary { padding: 10px 18px; font-size: 8.5px; }
+      .hero-cta-ghost { padding: 9px 14px; font-size: 8.5px; }
+      .hero-trust-mini { display: none; }
+      /* trust bar — 4-up 2×2 grid on tiny phones */
+      #trust-bar { bottom: 8%; }
+      .trust-bar-inner { gap: 8px 12px; padding: 8px 10px; }
+      .trust-stat-num { font-size: 14px; }
+      .trust-stat-label { font-size: 6.5px; }
+
+      /* ── SERVICES: tighter on tiny phones ── */
+      #services-overlay { padding: 110px 10px 20px; }
+      .svo-name { font-size: 13px; }
+      .svo-card { padding: 11px 10px 9px; border-radius: 10px; }
+      .svo-features li { font-size: 9.5px; }
+      .svo-title { font-size: clamp(17px, 5vw, 26px); }
+      .svo-tagline { font-size: 9px; }
+
+      /* ── WORK SLIDES: tiny phone — still clears the nav ── */
+      .h-slide { padding: 130px 0 38px; }
+      .h-title { font-size: clamp(21px, 7vw, 32px); }
+      .h-desc { font-size: 10px; }
+      .h-preview { max-height: 24vh; }
+
+      /* ── CONTACT MODAL: full comfortable width ── */
+      #contact-inner { padding: 38px 16px 26px; width: 98vw; }
+
+      /* ── HUMYNEX POPUP ── */
+      .hpop-card { padding: 28px 18px 22px; }
+      .hpop-name { font-size: 22px; }
+
+      /* ── SECTION TEXTS ── */
+      #aiworld-text h2 { font-size: clamp(18px, 5.5vw, 28px); }
+      #pricing-text h2 { font-size: clamp(18px, 5.5vw, 28px); }
     }
 
   </style>
@@ -1590,48 +2665,6 @@
 </div>
 <div id="charge-flash"></div>
 
-<!-- Shooting Stars -->
-<div class="sstar" style="--x1:8vw;--y1:8vh;--x2:55vw;--y2:38vh;--d:5.2s;--dl:0s;--len:120px"></div>
-<div class="sstar" style="--x1:72vw;--y1:5vh;--x2:115vw;--y2:30vh;--d:4.1s;--dl:1.8s;--len:100px"></div>
-<div class="sstar" style="--x1:18vw;--y1:22vh;--x2:62vw;--y2:50vh;--d:6.3s;--dl:0.6s;--len:140px"></div>
-<div class="sstar" style="--x1:45vw;--y1:3vh;--x2:88vw;--y2:28vh;--d:3.8s;--dl:2.4s;--len:90px"></div>
-<div class="sstar" style="--x1:2vw;--y1:35vh;--x2:40vw;--y2:60vh;--d:5.7s;--dl:3.1s;--len:110px"></div>
-<div class="sstar" style="--x1:60vw;--y1:12vh;--x2:100vw;--y2:38vh;--d:4.5s;--dl:0.3s;--len:130px"></div>
-<div class="sstar" style="--x1:30vw;--y1:1vh;--x2:72vw;--y2:22vh;--d:7.1s;--dl:1.2s;--len:105px"></div>
-<div class="sstar" style="--x1:85vw;--y1:18vh;--x2:125vw;--y2:42vh;--d:3.4s;--dl:4.0s;--len:85px"></div>
-<div class="sstar" style="--x1:12vw;--y1:55vh;--x2:50vw;--y2:78vh;--d:6.8s;--dl:2.7s;--len:125px"></div>
-<div class="sstar" style="--x1:55vw;--y1:40vh;--x2:92vw;--y2:62vh;--d:4.9s;--dl:0.9s;--len:95px"></div>
-<div class="sstar" style="--x1:22vw;--y1:68vh;--x2:58vw;--y2:90vh;--d:5.5s;--dl:3.8s;--len:115px"></div>
-<div class="sstar" style="--x1:78vw;--y1:60vh;--x2:118vw;--y2:85vh;--d:3.9s;--dl:1.5s;--len:98px"></div>
-<div class="sstar" style="--x1:5vw;--y1:45vh;--x2:48vw;--y2:70vh;--d:4.4s;--dl:5.2s;--len:135px"></div>
-<div class="sstar" style="--x1:92vw;--y1:30vh;--x2:130vw;--y2:55vh;--d:3.6s;--dl:0.7s;--len:80px"></div>
-<div class="sstar" style="--x1:38vw;--y1:10vh;--x2:80vw;--y2:35vh;--d:5.9s;--dl:2.1s;--len:150px"></div>
-<div class="sstar" style="--x1:15vw;--y1:80vh;--x2:55vw;--y2:100vh;--d:4.2s;--dl:4.5s;--len:110px"></div>
-<div class="sstar" style="--x1:65vw;--y1:72vh;--x2:105vw;--y2:95vh;--d:6.0s;--dl:1.0s;--len:92px"></div>
-<div class="sstar" style="--x1:50vw;--y1:25vh;--x2:90vw;--y2:48vh;--d:3.3s;--dl:3.3s;--len:145px"></div>
-<div class="sstar" style="--x1:25vw;--y1:50vh;--x2:68vw;--y2:75vh;--d:5.1s;--dl:6.0s;--len:118px"></div>
-<div class="sstar" style="--x1:82vw;--y1:42vh;--x2:120vw;--y2:65vh;--d:4.7s;--dl:2.9s;--len:102px"></div>
-<!-- Twinkling stars -->
-<div class="tstar" style="width:2px;height:2px;top:8%;left:12%;--tb:2.8s;--tdl:0s;--tlo:0.2;--thi:0.9"></div>
-<div class="tstar" style="width:1px;height:1px;top:15%;left:78%;--tb:3.5s;--tdl:0.4s;--tlo:0.1;--thi:0.8"></div>
-<div class="tstar" style="width:2px;height:2px;top:3%;left:55%;--tb:2.2s;--tdl:1.1s;--tlo:0.25;--thi:1.0"></div>
-<div class="tstar" style="width:1px;height:1px;top:22%;left:33%;--tb:4.1s;--tdl:0.7s;--tlo:0.15;--thi:0.75"></div>
-<div class="tstar" style="width:2px;height:2px;top:38%;left:91%;--tb:3.0s;--tdl:1.8s;--tlo:0.2;--thi:0.95"></div>
-<div class="tstar" style="width:1px;height:1px;top:50%;left:7%;--tb:2.5s;--tdl:0.3s;--tlo:0.1;--thi:0.7"></div>
-<div class="tstar" style="width:2px;height:2px;top:62%;left:44%;--tb:3.8s;--tdl:2.2s;--tlo:0.3;--thi:1.0"></div>
-<div class="tstar" style="width:1px;height:1px;top:75%;left:68%;--tb:2.1s;--tdl:0.9s;--tlo:0.2;--thi:0.85"></div>
-<div class="tstar" style="width:2px;height:2px;top:88%;left:22%;--tb:3.3s;--tdl:1.5s;--tlo:0.15;--thi:0.9"></div>
-<div class="tstar" style="width:1px;height:1px;top:5%;left:88%;--tb:4.5s;--tdl:0.1s;--tlo:0.1;--thi:0.75"></div>
-<div class="tstar" style="width:2px;height:2px;top:30%;left:61%;--tb:2.7s;--tdl:3.0s;--tlo:0.25;--thi:0.95"></div>
-<div class="tstar" style="width:1px;height:1px;top:47%;left:28%;--tb:3.6s;--tdl:1.3s;--tlo:0.1;--thi:0.8"></div>
-<div class="tstar" style="width:2px;height:2px;top:70%;left:84%;--tb:2.3s;--tdl:2.6s;--tlo:0.2;--thi:1.0"></div>
-<div class="tstar" style="width:1px;height:1px;top:18%;left:48%;--tb:3.9s;--tdl:0.5s;--tlo:0.15;--thi:0.7"></div>
-<div class="tstar" style="width:2px;height:2px;top:93%;left:57%;--tb:2.6s;--tdl:1.7s;--tlo:0.3;--thi:0.9"></div>
-<div class="tstar" style="width:1px;height:1px;top:55%;left:15%;--tb:4.2s;--tdl:0.8s;--tlo:0.1;--thi:0.75"></div>
-<div class="tstar" style="width:2px;height:2px;top:12%;left:38%;--tb:3.1s;--tdl:2.4s;--tlo:0.2;--thi:0.85"></div>
-<div class="tstar" style="width:1px;height:1px;top:82%;left:73%;--tb:2.9s;--tdl:0.2s;--tlo:0.15;--thi:0.95"></div>
-<div class="tstar" style="width:2px;height:2px;top:42%;left:5%;--tb:3.4s;--tdl:1.9s;--tlo:0.25;--thi:1.0"></div>
-<div class="tstar" style="width:1px;height:1px;top:28%;left:97%;--tb:2.4s;--tdl:0.6s;--tlo:0.1;--thi:0.8"></div>
 
 <!-- Atmosphere -->
 <div id="noise"></div>
@@ -1639,13 +2672,54 @@
 <div id="scanlines"></div>
 
 <canvas id="canvas"></canvas>
+
+<!-- ── HERO ENERGY VIDEO BACKGROUND — hidden on scroll, not deleted ── -->
+<video id="hero-video" playsinline muted loop autoplay>
+  <source src="/videos/hero-energy.mp4" type="video/mp4">
+</video>
+
+<!-- ── HERO ENERGY CANVAS — mouse pulse overlay ── -->
+<canvas id="hero-energy-canvas"></canvas>
+
 <div id="hero-center-wrap">
   <canvas id="humynex-code"></canvas>
   <div id="hero-tagline">
     <div class="tag-top" id="tag-top-line"></div>
     <div class="tag-bottom" id="tag-bottom-line"></div>
   </div>
+  <!-- CTA buttons — new, hero zone -->
+  <div class="hero-cta-row">
+    <a class="hero-cta-primary" href="booking.html">Book a Project &rarr;</a>
+    <a class="hero-cta-ghost" href="#" data-scene="6">See Our Work</a>
+  </div>
+  <!-- Mini trust bar — hero zone -->
+  <div class="hero-trust-mini">
+    <span>12+ Sites Launched</span>
+    <span class="htrust-sep">·</span>
+    <span>Starting at $250</span>
+    <span class="htrust-sep">·</span>
+    <span>14-Day Delivery</span>
+  </div>
 </div>
+
+<!-- Available signal — hidden per user request -->
+<div id="hero-available" style="display:none!important">
+  <span class="havail-dot"></span>
+  Available for New Projects
+</div>
+
+<!-- Eyebrow label above 3D text -->
+<div id="hero-eyebrow">AI-Powered&nbsp;&nbsp;Web&nbsp;&nbsp;Agency</div>
+
+
+<!-- New scroll indicator -->
+<div id="hero-scroll-ind">
+  <div class="hsi-bar"></div>
+  <span class="hsi-label">Scroll</span>
+</div>
+
+<!-- hero-bubbles removed per user request — nav pill buttons (Home/Services/Work/Prices) remain -->
+
 <div id="ui-overlay"></div>
 <div class="cursor"></div>
 <div id="scroll-proxy"></div>
@@ -1654,6 +2728,27 @@
 <div id="hud-tl">
   <div id="hud-status">INITIALIZING</div>
   <div id="hud-coherence">0.000</div>
+</div>
+
+<!-- HUMYNEX click hit-area — transparent target over 3D text -->
+<div id="hero-humynex-hit" aria-label="Open HUMYNEX info" role="button" tabindex="0"></div>
+
+<!-- HUMYNEX pop-up modal -->
+<div id="hero-humynex-popup">
+  <div class="hpop-bg"></div>
+  <div class="hpop-card">
+    <button class="hpop-close" id="hpop-close" aria-label="Close">✕</button>
+    <div class="hpop-x-icon">
+      <div class="hpop-bar hpop-bar-1"></div>
+      <div class="hpop-bar hpop-bar-2"></div>
+      <div class="hpop-center-glow"></div>
+    </div>
+    <div class="hpop-name">HUMYNEX</div>
+    <div class="hpop-sub">Human × Technology</div>
+    <div class="hpop-divider"></div>
+    <p class="hpop-desc">AI-powered web experiences built to convert.<br>From concept to launch in 14 days.</p>
+    <a href="booking.html" class="hpop-btn">Start a Project &nbsp;&rarr;</a>
+  </div>
 </div>
 
 <!-- Nav -->
@@ -1704,7 +2799,28 @@
       </a>
     </li>
   </ul>
+  <button id="nav-hamburger" aria-label="Toggle menu">
+    <span></span><span></span><span></span>
+  </button>
 </nav>
+<div id="mobile-nav">
+  <a class="mob-link" href="#" data-mob-scene="-1">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+    Home
+  </a>
+  <a class="mob-link" href="#" data-mob-scene="2">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+    Services
+  </a>
+  <a class="mob-link" href="#" data-mob-scene="6">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
+    Work
+  </a>
+  <a class="mob-link" href="#" data-mob-scene="7">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+    Pricing
+  </a>
+</div>
 
 </div>
 
@@ -1740,6 +2856,150 @@
   <p>// CHOOSE YOUR PATH FORWARD</p>
 </div>
 
+<!-- ── SERVICES OVERLAY — Premium 5-Discipline Showcase ── -->
+<div id="services-overlay">
+  <div class="svo-inner">
+
+    <div class="svo-header">
+      <div class="svo-eyebrow"><span id="svo-count">05</span> CORE DISCIPLINES</div>
+      <h2 class="svo-title">What we <span>Engineer</span></h2>
+      <p class="svo-tagline">AI-powered builds. Human-level craft. Zero compromises.</p>
+    </div>
+
+    <div class="svo-grid">
+
+      <!-- 01 Websites — Featured -->
+      <div class="svo-card svo-featured" style="--sc:#00b4d8">
+        <div class="svo-shimmer"></div>
+        <div class="svo-badge">Most Requested</div>
+        <div class="svo-card-head">
+          <span class="svo-num">01</span>
+          <div class="svo-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/>
+            </svg>
+          </div>
+        </div>
+        <h3 class="svo-name">Websites</h3>
+        <p class="svo-sub-label">// Custom Digital Experiences</p>
+        <div class="svo-divider"></div>
+        <ul class="svo-features">
+          <li>Landing Pages</li>
+          <li>E-Commerce</li>
+          <li>Web Apps</li>
+          <li>CMS Integration</li>
+        </ul>
+        <a href="booking.html?service=websites" class="svo-btn">Book This Service &rarr;</a>
+      </div>
+
+      <!-- 02 Mobile Apps -->
+      <div class="svo-card" style="--sc:#7b2fff">
+        <div class="svo-shimmer"></div>
+        <div class="svo-card-head">
+          <span class="svo-num">02</span>
+          <div class="svo-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/>
+            </svg>
+          </div>
+        </div>
+        <h3 class="svo-name">Mobile Apps</h3>
+        <p class="svo-sub-label">// iOS &amp; Android Native</p>
+        <div class="svo-divider"></div>
+        <ul class="svo-features">
+          <li>React Native</li>
+          <li>App Store Launch</li>
+          <li>Push Notifications</li>
+          <li>Offline Mode</li>
+        </ul>
+        <a href="booking.html?service=mobile-apps" class="svo-btn">Book This Service &rarr;</a>
+      </div>
+
+      <!-- 03 AI Agents -->
+      <div class="svo-card" style="--sc:#00d4aa">
+        <div class="svo-shimmer"></div>
+        <div class="svo-card-head">
+          <span class="svo-num">03</span>
+          <div class="svo-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/>
+              <line x1="9" y1="1" x2="9" y2="4"/><line x1="15" y1="1" x2="15" y2="4"/>
+              <line x1="9" y1="20" x2="9" y2="23"/><line x1="15" y1="20" x2="15" y2="23"/>
+              <line x1="20" y1="9" x2="23" y2="9"/><line x1="20" y1="14" x2="23" y2="14"/>
+              <line x1="1" y1="9" x2="4" y2="9"/><line x1="1" y1="14" x2="4" y2="14"/>
+            </svg>
+          </div>
+        </div>
+        <h3 class="svo-name">AI Agents</h3>
+        <p class="svo-sub-label">// Autonomous Systems</p>
+        <div class="svo-divider"></div>
+        <ul class="svo-features">
+          <li>24/7 Automation</li>
+          <li>Lead Qualification</li>
+          <li>CRM Integration</li>
+          <li>Multi-Platform</li>
+        </ul>
+        <a href="booking.html?service=ai-agents" class="svo-btn">Book This Service &rarr;</a>
+      </div>
+
+      <!-- 04 Branding -->
+      <div class="svo-card" style="--sc:#f59e0b">
+        <div class="svo-shimmer"></div>
+        <div class="svo-card-head">
+          <span class="svo-num">04</span>
+          <div class="svo-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/>
+            </svg>
+          </div>
+        </div>
+        <h3 class="svo-name">Branding</h3>
+        <p class="svo-sub-label">// Visual Identity Systems</p>
+        <div class="svo-divider"></div>
+        <ul class="svo-features">
+          <li>Logo &amp; Identity</li>
+          <li>Brand Guidelines</li>
+          <li>Motion Graphics</li>
+          <li>UI Systems</li>
+        </ul>
+        <a href="booking.html?service=branding" class="svo-btn">Book This Service &rarr;</a>
+      </div>
+
+      <!-- 05 Automation -->
+      <div class="svo-card" style="--sc:#ff6b6b">
+        <div class="svo-shimmer"></div>
+        <div class="svo-card-head">
+          <span class="svo-num">05</span>
+          <div class="svo-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+            </svg>
+          </div>
+        </div>
+        <h3 class="svo-name">Automation</h3>
+        <p class="svo-sub-label">// AI-Powered Workflows</p>
+        <div class="svo-divider"></div>
+        <ul class="svo-features">
+          <li>Zapier / Make</li>
+          <li>Custom Pipelines</li>
+          <li>Data Processing</li>
+          <li>API Hooks</li>
+        </ul>
+        <a href="booking.html?service=automation" class="svo-btn">Book This Service &rarr;</a>
+      </div>
+
+    </div>
+
+    <!-- Capability ticker -->
+    <div class="svo-ticker-wrap">
+      <span class="svo-ticker">
+        Websites &nbsp;&#x2014;&nbsp; Mobile Apps &nbsp;&#x2014;&nbsp; AI Agents &nbsp;&#x2014;&nbsp; Branding &nbsp;&#x2014;&nbsp; Automation &nbsp;&#x2014;&nbsp; React Native &nbsp;&#x2014;&nbsp; WebGL &nbsp;&#x2014;&nbsp; E-Commerce &nbsp;&#x2014;&nbsp; CRM Integration &nbsp;&#x2014;&nbsp; Custom Pipelines &nbsp;&#x2014;&nbsp; Websites &nbsp;&#x2014;&nbsp; Mobile Apps &nbsp;&#x2014;&nbsp; AI Agents &nbsp;&#x2014;&nbsp; Branding &nbsp;&#x2014;&nbsp; Automation &nbsp;&#x2014;&nbsp; React Native &nbsp;&#x2014;&nbsp; WebGL &nbsp;&#x2014;&nbsp; E-Commerce &nbsp;&#x2014;&nbsp; CRM Integration &nbsp;&#x2014;&nbsp; Custom Pipelines &nbsp;&#x2014;&nbsp;
+      </span>
+    </div>
+
+  </div>
+</div>
+
 <!-- Booking CTA -->
 <div id="booking-cta">
   <a href="booking.html" class="cta-btn">
@@ -1766,7 +3026,7 @@
     </div>
     <div class="trust-div"></div>
     <div class="trust-stat">
-      <div class="trust-stat-num" style="font-size:15px;letter-spacing:0.04em">HumanX</div>
+      <div class="trust-stat-num" style="font-size:15px;letter-spacing:0.04em">HUMYNEX</div>
       <div class="trust-stat-label">Built Different</div>
     </div>
   </div>
@@ -1872,7 +3132,7 @@
 </div>
 
 <!-- ── PRICING OVERLAY — Animated Glassy Cards ── -->
-<div id="pricing-overlay">
+<div id="pricing-overlay" data-lenis-prevent>
   <canvas id="pricing-shader"></canvas>
   <div class="pg-wrap">
     <div class="pg-header">
@@ -1940,6 +3200,8 @@
       </div>
 
     </div>
+
+
   </div>
 </div>
 
@@ -1965,15 +3227,20 @@
 
 <!-- ── HORIZONTAL PROJECT SLIDES ──────────────────────────── -->
 <div id="h-slides-wrap">
+  <canvas id="h-bg-canvas"></canvas>
   <div id="h-slides-track">
 
     <!-- 01 TLD Contracting -->
     <div class="h-slide h-on" style="--hc:#F59E0B">
       <div class="h-slide-bg" style="background-image:url('/screenshots/tld-contracting.jpg')"></div>
+      <span class="h-ghost-num">01</span>
+      <div class="h-orb"></div>
       <div class="h-content">
-        <span class="h-num">01 / 02</span>
+        <span class="h-meta">HUMYNEX STUDIO · 2025</span>
+        <span class="h-num">01 / 04</span>
         <h2 class="h-title">TLD Contracting</h2>
         <p class="h-tag-line">Website / Local Business</p>
+        <div class="h-divider"></div>
         <p class="h-desc">Cinematic scroll-expansion website for Omaha's premier contracting company. Frame-by-frame canvas animation, bento grid services, GSAP scroll triggers — built to convert.</p>
         <div class="h-pills"><span>GSAP</span><span>Lenis</span><span>Canvas API</span><span>ScrollTrigger</span></div>
       </div>
@@ -1982,13 +3249,55 @@
       </div>
     </div>
 
-    <!-- 02 Coming Soon -->
-    <div class="h-slide h-coming-soon" style="--hc:#7b2fff">
-      <div class="h-slide-bg" style="background:radial-gradient(ellipse at center, rgba(123,47,255,0.12) 0%, transparent 70%)"></div>
+    <!-- 02 Alien Movers -->
+    <div class="h-slide" style="--hc:#00e676">
+      <div class="h-slide-bg" style="background:radial-gradient(ellipse at 60% 50%, rgba(0,230,118,0.06) 0%, transparent 70%)"></div>
+      <span class="h-ghost-num">02</span>
+      <div class="h-orb"></div>
       <div class="h-content">
-        <span class="h-num">02 / 02</span>
+        <span class="h-meta">HUMYNEX STUDIO · 2025</span>
+        <span class="h-num">02 / 04</span>
+        <h2 class="h-title">Alien Movers</h2>
+        <p class="h-tag-line">Website Template / Moving Company</p>
+        <div class="h-divider"></div>
+        <p class="h-desc">A premium website template built for moving companies. Bold, modern, built to convert — this is what a mover's online presence should look like. Template available for purchase.</p>
+        <div class="h-pills"><span>Template</span><span>GSAP</span><span>Responsive</span><span>Modern UI</span></div>
+      </div>
+      <div class="h-preview">
+        <video src="/videos/alien-movers.mp4" autoplay muted loop playsinline preload="none" style="width:100%;height:100%;object-fit:cover;display:block"></video>
+      </div>
+    </div>
+
+    <!-- 03 Venue Templates -->
+    <div class="h-slide" style="--hc:#c084fc">
+      <div class="h-slide-bg" style="background:radial-gradient(ellipse at 60% 50%, rgba(192,132,252,0.06) 0%, transparent 70%)"></div>
+      <span class="h-ghost-num">03</span>
+      <div class="h-orb"></div>
+      <div class="h-content">
+        <span class="h-meta">HUMYNEX STUDIO · 2025</span>
+        <span class="h-num">03 / 04</span>
+        <h2 class="h-title">Venue Templates</h2>
+        <p class="h-tag-line">Website Template / Event Venues</p>
+        <div class="h-divider"></div>
+        <p class="h-desc">Premium website template designed for event venues, banquet halls, and private dining spaces. Immersive full-screen layouts, availability inquiry forms, and gallery-first design — built to make every space look unforgettable.</p>
+        <div class="h-pills"><span>Template</span><span>GSAP</span><span>Responsive</span><span>Gallery</span></div>
+      </div>
+      <div class="h-preview">
+        <video src="/videos/venue-template.mp4" autoplay muted loop playsinline preload="none" style="width:100%;height:100%;object-fit:cover;display:block"></video>
+      </div>
+    </div>
+
+    <!-- 04 Coming Soon -->
+    <div class="h-slide h-coming-soon" style="--hc:#7b2fff">
+      <div class="h-slide-bg" style="background:radial-gradient(ellipse at center, rgba(123,47,255,0.08) 0%, transparent 70%)"></div>
+      <span class="h-ghost-num">04</span>
+      <div class="h-orb"></div>
+      <div class="h-content">
+        <span class="h-meta">MORE COMING SOON</span>
+        <span class="h-num">04 / 04</span>
         <h2 class="h-title" style="font-size:clamp(32px,5vw,72px);letter-spacing:0.04em">More On<br>The Way.</h2>
         <p class="h-tag-line">New Projects Loading</p>
+        <div class="h-divider"></div>
         <p class="h-desc">Currently working on new builds. Check back soon — the next project will be here before you know it.</p>
         <div class="h-pills"><span>Websites</span><span>AI Agents</span><span>Automation</span><span>Mobile Apps</span></div>
         <button class="h-btn" onclick="document.getElementById('contact-modal').classList.add('open')">Start a Project →</button>
@@ -2010,8 +3319,10 @@
   <div id="h-dots">
     <div class="h-dot h-on" data-i="0" style="background:#F59E0B;width:50px"></div>
     <div class="h-dot" data-i="1"></div>
+    <div class="h-dot" data-i="2"></div>
+    <div class="h-dot" data-i="3"></div>
   </div>
-  <span id="h-count">01 / 02</span>
+  <span id="h-count">01 / 04</span>
 </div>
 
 <!-- Contact Form Modal -->
@@ -2078,6 +3389,19 @@
   const contactTriggerEl = document.getElementById('contact-trigger');
   const trustBar         = document.getElementById('trust-bar');
   const testimonialSwiper = document.getElementById('testimonial-swiper');
+  const servicesOverlay  = document.getElementById('services-overlay');
+  let _svoLive = false;
+
+  function runSvoCounter() {
+    const el = document.getElementById('svo-count');
+    if (!el) return;
+    let n = 0;
+    const tick = setInterval(() => {
+      n++;
+      el.textContent = n < 10 ? '0' + n : String(n);
+      if (n >= 5) clearInterval(tick);
+    }, 60);
+  }
 
   function syncOverlays() {
     const maxSc = document.documentElement.scrollHeight - window.innerHeight;
@@ -2098,10 +3422,11 @@
       contactTriggerEl.style.opacity = ctVis;
       contactTriggerEl.classList.toggle('visible', ctVis > 0.02);
     }
-    // Trust bar — hero zone (sp 0.04–0.22)
+    // Trust bar — visible in work/portfolio section (sp 0.78–0.89)
     if (trustBar) {
-      const tVis = Math.min(1,Math.max(0,(_scrollProg-0.04)/0.03))
-                 * (1 - Math.min(1,Math.max(0,(_scrollProg-0.19)/0.04)));
+      const tIn  = Math.min(1, Math.max(0, (_scrollProg - 0.78) / 0.04));
+      const tOut = 1 - Math.min(1, Math.max(0, (_scrollProg - 0.87) / 0.03));
+      const tVis = tIn * tOut;
       trustBar.style.opacity = tVis;
       trustBar.classList.toggle('visible', tVis > 0.02);
     }
@@ -2110,6 +3435,33 @@
       const tVis = Math.min(1, Math.max(0, (_scrollProg - 0.91) / 0.03));
       testimonialSwiper.style.opacity = tVis;
       testimonialSwiper.classList.toggle('visible', tVis > 0.02);
+    }
+
+    // Services overlay — fades in at sp 0.29, fades out at 0.42
+    if (servicesOverlay) {
+      const sIn  = Math.min(1, Math.max(0, (_scrollProg - 0.29) / 0.06));
+      const sOut = 1 - Math.min(1, Math.max(0, (_scrollProg - 0.40) / 0.04));
+      const sVis = sIn * sOut;
+      servicesOverlay.style.opacity = sVis;
+      servicesOverlay.style.pointerEvents = sVis > 0.08 ? 'all' : 'none';
+
+      if (sVis > 0.5 && !_svoLive) {
+        _svoLive = true;
+        servicesOverlay.classList.add('svo-live');
+        runSvoCounter();
+        // After stagger completes, clear animation so hover transform works freely
+        const cards = servicesOverlay.querySelectorAll('.svo-card');
+        cards.forEach(card => {
+          card.addEventListener('animationend', () => {
+            card.style.animation = 'none';
+          }, { once: true });
+        });
+      } else if (sVis < 0.05 && _svoLive) {
+        _svoLive = false;
+        servicesOverlay.classList.remove('svo-live');
+        const cards = servicesOverlay.querySelectorAll('.svo-card');
+        cards.forEach(card => { card.style.animation = ''; });
+      }
     }
 
     // Work gallery — replaced by horizontal slides, keep hidden
@@ -2126,7 +3478,7 @@
   const hDots   = document.querySelectorAll('.h-dot');
   const hCount  = document.getElementById('h-count');
   const hSlides = document.querySelectorAll('.h-slide');
-  const H_COLORS = ['#F59E0B','#7b2fff'];
+  const H_COLORS = ['#F59E0B','#00e676','#c084fc','#7b2fff'];
   let hActiveIdx = 0;
 
   window.addEventListener('scroll', syncOverlays, { passive: true });
@@ -2143,11 +3495,12 @@
       d.style.background  = i === idx ? H_COLORS[idx] : 'rgba(255,255,255,0.14)';
       d.style.width       = i === idx ? '50px' : '26px';
     });
-    if (hCount) hCount.textContent = String(idx + 1).padStart(2,'0') + ' / 02';
+    if (hCount) hCount.textContent = String(idx + 1).padStart(2,'0') + ' / 04';
+    if (window._setHBgColor) window._setHBgColor(H_COLORS[idx]);
   }
 
   function updateHSlides(sp) {
-    const ENTER = 0.72, EXIT = 0.87;
+    const ENTER = 0.50, EXIT = 0.85;
     const vis = Math.min(1, Math.max(0, (sp - ENTER) / 0.03))
               * (1 - Math.min(1, Math.max(0, (sp - (EXIT - 0.02)) / 0.02)));
     hWrap.style.opacity = vis;
@@ -2175,7 +3528,7 @@
 
   // ── DRAG / SWIPE to change slides ────────────────────────────────
   (function() {
-    const N = 2;
+    const N = hSlides.length;
     let dragStartX = 0, dragging = false, currentX = 0;
     const THRESHOLD = 60;
 
@@ -2216,6 +3569,76 @@
     hWrap.addEventListener('touchstart', onDragStart, { passive: true });
     hWrap.addEventListener('touchmove',  onDragMove,  { passive: true });
     hWrap.addEventListener('touchend',   onDragEnd);
+  })();
+
+  // ── WORK SECTION AMBIENT CANVAS ──────────────────────────────
+  (function() {
+    const cvs = document.getElementById('h-bg-canvas');
+    if (!cvs) return;
+    const ctx = cvs.getContext('2d');
+    let W = 0, H = 0;
+    let color = '#F59E0B';
+    let t = 0;
+
+    function resize() {
+      W = cvs.width  = window.innerWidth;
+      H = cvs.height = window.innerHeight;
+    }
+    resize();
+    window.addEventListener('resize', resize);
+
+    function hex2rgb(h) {
+      return [parseInt(h.slice(1,3),16), parseInt(h.slice(3,5),16), parseInt(h.slice(5,7),16)];
+    }
+
+    function draw() {
+      ctx.clearRect(0, 0, W, H);
+      const [r,g,b] = hex2rgb(color);
+      const vpX = W * 0.50;
+      const vpY = H * 0.70;
+
+      // Horizontal perspective floor lines
+      for (let i = 1; i <= 14; i++) {
+        const frac = i / 14;
+        const y = vpY + (H - vpY) * Math.pow(frac, 1.7) + Math.sin(t * 0.35 + frac * 5) * 1.8;
+        const halfW = W * 0.54 * frac;
+        const alpha = frac * frac * 0.11;
+        ctx.beginPath();
+        ctx.moveTo(vpX - halfW, y);
+        ctx.lineTo(vpX + halfW, y);
+        ctx.strokeStyle = `rgba(${r},${g},${b},${alpha.toFixed(3)})`;
+        ctx.lineWidth = 0.7;
+        ctx.stroke();
+      }
+
+      // Vertical perspective lines
+      for (let i = 0; i <= 10; i++) {
+        const xf = (i / 10) * 2 - 1;
+        const alpha = (1 - Math.abs(xf) * 0.65) * 0.042;
+        ctx.beginPath();
+        ctx.moveTo(vpX + xf * W * 0.018, vpY);
+        ctx.lineTo(vpX + xf * W * 1.15, H);
+        ctx.strokeStyle = `rgba(${r},${g},${b},${alpha.toFixed(3)})`;
+        ctx.lineWidth = 0.7;
+        ctx.stroke();
+      }
+
+      // Soft center ambient glow
+      const grd = ctx.createRadialGradient(W*0.5, H*0.46, 0, W*0.5, H*0.46, W*0.42);
+      grd.addColorStop(0, `rgba(${r},${g},${b},0.022)`);
+      grd.addColorStop(1, 'transparent');
+      ctx.fillStyle = grd;
+      ctx.fillRect(0, 0, W, H);
+    }
+
+    function loop() {
+      t += 0.01;
+      if (hWrap.classList.contains('h-vis')) draw();
+      requestAnimationFrame(loop);
+    }
+    loop();
+
+    window._setHBgColor = function(hex) { color = hex; };
   })();
 
   // Work gallery cards → click opens project modal with video
@@ -2475,9 +3898,16 @@
     }
 
     const wrap = document.getElementById('hero-center-wrap');
+    const _heroEls = ['hero-available','hero-eyebrow','hero-scroll-ind'].map(id => document.getElementById(id));
     window.addEventListener('scroll', () => {
-      const fade = Math.max(0, 1 - (window.scrollY || document.documentElement.scrollTop) / 320);
-      if (wrap) wrap.style.opacity = fade;
+      const scrollY = window.scrollY || document.documentElement.scrollTop;
+      const fade = Math.max(0, 1 - scrollY / 280);
+      const lift = Math.min(scrollY * 0.20, 90);
+      if (wrap) {
+        wrap.style.opacity = fade;
+        wrap.style.transform = `translate(-50%, calc(-50% - ${lift}px))`;
+      }
+      _heroEls.forEach(el => { if (el) el.style.opacity = fade; });
     }, { passive: true });
 
     function kick() { requestAnimationFrame(frame); }
@@ -2525,6 +3955,148 @@
   else { window.addEventListener('load', run); }
 })();
 </script>
+<!-- ── HERO: room immersion + slow video + energy canvas + popup ── -->
+<script>
+(function () {
+  const vid   = document.getElementById('hero-video');
+  const eCvs  = document.getElementById('hero-energy-canvas');
+  const hit   = document.getElementById('hero-humynex-hit');
+  const popup = document.getElementById('hero-humynex-popup');
+  const pClose = document.getElementById('hpop-close');
+  const pBg   = popup ? popup.querySelector('.hpop-bg') : null;
+  if (!vid || !eCvs) return;
+
+  /* ── Smooth ambient pace ── */
+  function setRate() { try { vid.playbackRate = 0.65; } catch(e){} }
+  setRate();
+  vid.addEventListener('canplay', setRate);
+  vid.addEventListener('play',    setRate);
+
+  const ctx = eCvs.getContext('2d');
+  let W = window.innerWidth, H = window.innerHeight;
+  let mx = W / 2, my = H / 2;
+
+  /* smooth rotation state — "we're in the room" */
+  let targetRx = 0, targetRy = 0, curRx = 0, curRy = 0;
+  const LERP = 0.032;
+
+  const pulses = [];
+
+  function resize() {
+    W = window.innerWidth; H = window.innerHeight;
+    eCvs.width = W; eCvs.height = H;
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  function getSP() {
+    const m = document.documentElement.scrollHeight - window.innerHeight;
+    return m > 0 ? window.scrollY / m : 0;
+  }
+
+  /* ── Mouse: set rotation targets + energy trail ── */
+  window.addEventListener('mousemove', (e) => {
+    mx = e.clientX; my = e.clientY;
+    /* room look: mouse right = pan right (negative rotateY in CSS perspective) */
+    targetRx = (my / H - 0.5) *  5.5;
+    targetRy = (mx / W - 0.5) * -10;
+    if (getSP() < 0.15 && Math.random() < 0.10) {
+      pulses.push({ x: e.clientX, y: e.clientY, r: 0, alpha: 0.40, maxR: 50 + Math.random() * 60, type: 'trail' });
+    }
+  });
+
+  /* ── Click on canvas: energy burst (not popup) ── */
+  window.addEventListener('click', (e) => {
+    if (getSP() > 0.15) return;
+    if (e.target && (e.target.id === 'hero-humynex-hit' ||
+        e.target.closest('#hero-humynex-hit') ||
+        e.target.closest('#hero-humynex-popup'))) return;
+    for (let i = 0; i < 3; i++) {
+      pulses.push({ x: e.clientX, y: e.clientY, r: 0, alpha: 0.85 - i * 0.22, maxR: 160 - i * 36, type: 'burst' });
+    }
+  });
+
+  /* ── Popup ── */
+  if (hit && popup) {
+    hit.addEventListener('click', () => popup.classList.add('hpop-open'));
+    if (pClose) pClose.addEventListener('click', () => popup.classList.remove('hpop-open'));
+    if (pBg)    pBg.addEventListener('click',   () => popup.classList.remove('hpop-open'));
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') popup.classList.remove('hpop-open'); });
+    /* auto-close popup when scrolling away from hero */
+    window.addEventListener('scroll', () => {
+      if (getSP() > 0.06) popup.classList.remove('hpop-open');
+    }, { passive: true });
+  }
+
+  /* ── Master rAF loop ── */
+  let _heroRafActive = true;
+  document.addEventListener('visibilitychange', () => {
+    _heroRafActive = !document.hidden;
+    if (!document.hidden) requestAnimationFrame(frame);
+  });
+
+  function frame() {
+    if (!_heroRafActive) return;
+    const sp    = getSP();
+    /* Exit: fade + lift up — "going to another room" */
+    const exitT = Math.max(0, Math.min(1, (sp - 0.03) / 0.12));
+    const alpha = 1 - exitT;
+    const liftVh = exitT * 24;
+
+    /* lerp rotation toward target */
+    curRx += (targetRx - curRx) * LERP;
+    curRy += (targetRy - curRy) * LERP;
+
+    /* scale: slightly larger as you scroll */
+    const sc = 1.15 + sp * 0.06;
+
+    vid.style.opacity   = alpha;
+    vid.style.transform = `perspective(1200px) rotateX(${curRx}deg) rotateY(${curRy}deg) scale(${sc}) translateY(-${liftVh}vh)`;
+
+    /* fade hit-target with hero, disable pointer events when invisible */
+    if (hit) {
+      hit.style.opacity       = alpha;
+      hit.style.pointerEvents = alpha > 0.15 ? 'all' : 'none';
+    }
+
+    /* ── Energy canvas ── */
+    ctx.clearRect(0, 0, W, H);
+    if (sp < 0.16) {
+      /* soft ambient glow around cursor */
+      const gr = ctx.createRadialGradient(mx, my, 0, mx, my, 140);
+      gr.addColorStop(0,   'rgba(0,140,255,0.052)');
+      gr.addColorStop(0.5, 'rgba(0,100,255,0.016)');
+      gr.addColorStop(1,   'transparent');
+      ctx.fillStyle = gr;
+      ctx.fillRect(0, 0, W, H);
+
+      for (let i = pulses.length - 1; i >= 0; i--) {
+        const p = pulses[i];
+        p.r    += (p.maxR - p.r) * 0.065 + 1.6;
+        p.alpha *= p.type === 'burst' ? 0.914 : 0.905;
+        if (p.alpha < 0.007) { pulses.splice(i, 1); continue; }
+
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        ctx.strokeStyle = `rgba(0,180,255,${p.alpha * 0.88})`;
+        ctx.lineWidth = p.type === 'burst' ? 1.7 : 0.9;
+        ctx.stroke();
+
+        const ig = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.r);
+        ig.addColorStop(0,   `rgba(0,180,255,${p.alpha * 0.09})`);
+        ig.addColorStop(0.5, `rgba(0,100,255,${p.alpha * 0.03})`);
+        ig.addColorStop(1,   'transparent');
+        ctx.fillStyle = ig;
+        ctx.fill();
+      }
+    }
+
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+})();
+</script>
+
 <script type="module" src="main.js"></script>
 
 <!-- Nav X — looping code-fill animation -->
@@ -2650,34 +4222,13 @@
 })();
 </script>
 
-<!-- Nav HUMYNEX typewriter -->
+<!-- Nav logo — static, no typewriter -->
 <script>
 (function () {
   const textEl   = document.getElementById('nav-tw-text');
   const cursorEl = document.getElementById('nav-tw-cursor');
-  if (!textEl) return;
-
-  const TEXT = 'HUMYNEX';
-  const wait  = ms => new Promise(r => setTimeout(r, ms));
-
-  async function run() {
-    while (true) {
-      // Type out
-      for (let i = 0; i <= TEXT.length; i++) {
-        textEl.textContent = TEXT.slice(0, i);
-        await wait(70 + Math.random() * 55);
-      }
-      await wait(2400); // hold
-      // Delete
-      for (let i = TEXT.length; i >= 0; i--) {
-        textEl.textContent = TEXT.slice(0, i);
-        await wait(38 + Math.random() * 22);
-      }
-      await wait(420); // pause before retype
-    }
-  }
-
-  run();
+  if (textEl) textEl.textContent = 'HUMYNEX';
+  if (cursorEl) cursorEl.style.display = 'none';
 })();
 </script>
 
@@ -2747,10 +4298,12 @@
     window.addEventListener('resize', resize);
 
     function render(t) {
+      requestAnimationFrame(render);
+      const overlay = document.getElementById('pricing-overlay');
+      if (!overlay || !overlay.classList.contains('visible')) return;
       gl.uniform1f(tLoc, t * 0.001);
       gl.uniform2f(rLoc, canvas.width, canvas.height);
       gl.drawArrays(gl.TRIANGLES, 0, 6);
-      requestAnimationFrame(render);
     }
     requestAnimationFrame(render);
   }
@@ -2777,6 +4330,27 @@
 })();
 </script>
 
+<!-- Warp Speed Scroll -->
+<script>
+(function(){
+  const sstars = document.querySelectorAll('.sstar');
+  let lastY = window.scrollY, vel = 0, active = false;
+  window.addEventListener('scroll', () => {
+    vel = Math.min(Math.abs(window.scrollY - lastY) * 3.5, 120);
+    lastY = window.scrollY;
+  });
+  (function tick(){
+    vel *= 0.80;
+    const w = vel > 12;
+    if (w !== active) {
+      active = w;
+      sstars.forEach(s => s.classList.toggle('warp', w));
+    }
+    requestAnimationFrame(tick);
+  })();
+})();
+</script>
+
 <!-- Price card expand overlay — appears when a pricing card is clicked -->
 <div id="price-book-overlay">
   <div id="pbo-tier">STARTER PLAN</div>
@@ -2784,5 +4358,22 @@
   <a id="pbo-book" href="booking.html" class="pbo-book-btn">Book Now &nbsp;→</a>
   <button id="pbo-close">✕ &nbsp;CLOSE</button>
 </div>
+
+<!-- Mobile hamburger controller -->
+<script>
+(function () {
+  const hamburger = document.getElementById('nav-hamburger');
+  if (!hamburger) return;
+  hamburger.addEventListener('click', () => document.body.classList.toggle('nav-open'));
+  document.querySelectorAll('.mob-link[data-mob-scene]').forEach(function (a) {
+    a.addEventListener('click', function (e) {
+      e.preventDefault();
+      document.body.classList.remove('nav-open');
+      const target = document.querySelector('#nav-links a[data-scene="' + a.dataset.mobScene + '"]');
+      if (target) target.click();
+    });
+  });
+})();
+</script>
 </body>
 </html>

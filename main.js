@@ -10,6 +10,8 @@ import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
 import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass.js';
 import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass.js';
+import { FontLoader } from 'three/examples/jsm/loaders/FontLoader.js';
+import { TextGeometry } from 'three/examples/jsm/geometries/TextGeometry.js';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import Lenis from 'lenis';
@@ -28,7 +30,7 @@ const PROJECTS = [
     desc: 'Cinematic scroll-expansion website for Omaha\'s premier contracting company. Frame-by-frame canvas animation, bento grid services, GSAP scroll triggers — built to convert.',
     tech: ['GSAP', 'Lenis', 'Canvas API', 'ScrollTrigger'],
     color: '#F59E0B',
-    visit: 'file:///C:/Users/nashn/xix3d-website/index.html',
+    visit: '#',
     visitLabel: 'View Live Site',
     isTLD: true,
     screenshot: '/screenshots/tld-contracting.jpg',
@@ -436,17 +438,19 @@ const W = () => window.innerWidth;
 const H = () => window.innerHeight;
 
 const renderer = new THREE.WebGLRenderer({
-  canvas, antialias: true, alpha: false, powerPreference: 'high-performance'
+  canvas, antialias: true, alpha: true, powerPreference: 'high-performance'
 });
-renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.25));
+const isMobile = window.innerWidth < 768 || /Mobi|Android/i.test(navigator.userAgent);
+renderer.setPixelRatio(isMobile ? 1.0 : Math.min(window.devicePixelRatio, 1.25));
 renderer.setSize(W(), H());
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
 renderer.toneMappingExposure = 1.2;
 renderer.outputColorSpace = THREE.SRGBColorSpace;
+renderer.setClearColor(0x000000, 0);
 
 // ── SCENE ─────────────────────────────────────────────────────────
 const scene = new THREE.Scene();
-scene.background = new THREE.Color(0x000000);
+scene.background = null;
 scene.fog = new THREE.FogExp2(0x000000, 0.008);
 
 // ── CAMERA ────────────────────────────────────────────────────────
@@ -504,7 +508,7 @@ try {
 gsap.registerPlugin(ScrollTrigger);
 
 // ── NAV LINKS ─────────────────────────────────────────────────────
-document.querySelectorAll('#nav-links a').forEach(a => {
+document.querySelectorAll('#nav-links a, .hero-cta-ghost[data-scene]').forEach(a => {
   a.addEventListener('click', e => {
     e.preventDefault();
     const idx = parseInt(a.dataset.scene ?? '0');
@@ -524,9 +528,9 @@ document.querySelectorAll('#nav-links a').forEach(a => {
 // ── LIGHTS ────────────────────────────────────────────────────────
 scene.add(new THREE.AmbientLight(0x04080f, 0.9));
 
-const ptCyan   = new THREE.PointLight(0x00b4d8, 3.5, 35); ptCyan.position.set(3, 2, 7);    scene.add(ptCyan);
-const ptBio    = new THREE.PointLight(0xfff3e0, 2.0, 30); ptBio.position.set(-3, 1, 7);     scene.add(ptBio);
-const ptPurple = new THREE.PointLight(0x7b2fff, 1.5, 25); ptPurple.position.set(0, -4, 5);  scene.add(ptPurple);
+const ptCyan   = new THREE.PointLight(0x00b4ff, 2.8, 35); ptCyan.position.set(3, 2, 7);    scene.add(ptCyan);
+const ptBio    = new THREE.PointLight(0x60efff, 1.6, 30); ptBio.position.set(-3, 1, 7);     scene.add(ptBio);
+const ptPurple = new THREE.PointLight(0x0066cc, 1.2, 25); ptPurple.position.set(0, -4, 5);  scene.add(ptPurple);
 const rim      = new THREE.DirectionalLight(0x0044aa, 0.6); rim.position.set(0, 8, -12);     scene.add(rim);
 
 // Services lights (world z ≈ -10)
@@ -542,8 +546,10 @@ const aiLight3 = new THREE.PointLight(0x00ccaa, 0, 24); aiLight3.position.set(8,
 const priceLight = new THREE.PointLight(0x00c8ff, 0, 35); priceLight.position.set(0, 4, 4); scene.add(priceLight);
 
 // ── STAR FIELD ────────────────────────────────────────────────────
-(function buildStars() {
-  const count = 2800;
+let starMesh, starBase, starVel, starCount;
+{
+  const count = isMobile ? 600 : 2800;
+  starCount = count;
   const geo = new THREE.BufferGeometry();
   const pos = new Float32Array(count * 3);
   const col = new Float32Array(count * 3);
@@ -562,13 +568,225 @@ const priceLight = new THREE.PointLight(0x00c8ff, 0, 35); priceLight.position.se
   geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
   geo.setAttribute('color', new THREE.BufferAttribute(col, 3));
   const mat = new THREE.PointsMaterial({ size: 0.12, vertexColors: true, transparent: true, opacity: 0.5, sizeAttenuation: true });
-  scene.add(new THREE.Points(geo, mat));
-})();
+  starMesh = new THREE.Points(geo, mat);
+  starBase = pos.slice();
+  starVel  = new Float32Array(count * 3);
+  scene.add(starMesh);
+}
 
 // ── SHARED UNIFORMS ───────────────────────────────────────────────
 const UNI = { uTime: { value: 0 }, uMerge: { value: 0 } };
 // Pre-allocated fog color target — reused every frame (avoids GC pressure)
 const _fogTgt = new THREE.Color(0x000000);
+
+// ── PRE-ALLOCATED PHYSICS VECTORS ────────────────────────────────
+const _physPlane  = new THREE.Plane(new THREE.Vector3(0, 0, 1), 0);
+const _physCursor = new THREE.Vector3();
+
+// ── LIQUID METAL HERO SHADER ──────────────────────────────────────
+const liquidUni = {
+  uTime:  UNI.uTime,
+  uMouse: { value: new THREE.Vector2(0.5, 0.5) },
+  uAlpha: { value: 0.0 }
+};
+const liquidMat = new THREE.ShaderMaterial({
+  uniforms: liquidUni,
+  vertexShader: `
+    varying vec2 vUv;
+    void main() { vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0); }
+  `,
+  fragmentShader: `
+    uniform float uTime; uniform vec2 uMouse; uniform float uAlpha;
+    varying vec2 vUv;
+    float hash(vec2 p){ return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453); }
+    float noise(vec2 p){
+      vec2 i=floor(p),f=fract(p); f=f*f*(3.0-2.0*f);
+      return mix(mix(hash(i),hash(i+vec2(1,0)),f.x),mix(hash(i+vec2(0,1)),hash(i+vec2(1,1)),f.x),f.y);
+    }
+    float fbm(vec2 p){
+      float v=0.0,a=0.5;
+      for(int i=0;i<5;i++){v+=a*noise(p);p=p*2.0+vec2(1.7,9.2);a*=0.5;}
+      return v;
+    }
+    void main(){
+      vec2 uv=vUv;
+      vec2 q=vec2(fbm(uv+uTime*0.08),fbm(uv+vec2(5.2,1.3)+uTime*0.06));
+      float n=fbm(uv*2.5+q*0.6+uTime*0.04);
+      float mDist=length((uv-uMouse)*vec2(1.78,1.0));
+      n+=sin(mDist*15.0-uTime*4.5)*exp(-mDist*4.5)*0.12;
+      float eps=0.008;
+      float nx=fbm((uv+vec2(eps,0.0))*2.5+q*0.6+uTime*0.04)-n;
+      float ny=fbm((uv+vec2(0.0,eps))*2.5+q*0.6+uTime*0.04)-n;
+      vec3 nrm=normalize(vec3(nx*8.0,ny*8.0,1.0));
+      vec3 lightDir=normalize(vec3(uMouse.x*2.0-0.6,uMouse.y*2.0-0.2,1.5));
+      float diff=clamp(dot(nrm,lightDir),0.0,1.0);
+      float spec=pow(clamp(dot(nrm,normalize(lightDir+vec3(0,0,1))),0.0,1.0),48.0);
+      // Chrome: near-black base, controlled peaks
+      float peak=pow(clamp(diff,0.0,1.0),2.2);
+      vec3 dark=vec3(0.002,0.004,0.010),steel=vec3(0.055,0.08,0.14),chrome=vec3(0.42,0.52,0.68);
+      vec3 col=mix(dark,steel,n*0.9); col=mix(col,chrome,peak*0.75);
+      // Sharp primary specular + softer secondary
+      col+=vec3(0.65,0.78,1.00)*spec*1.1;
+      col+=vec3(0.20,0.45,0.75)*pow(clamp(dot(nrm,normalize(vec3(-0.8,0.5,1.0))),0.0,1.0),18.0)*0.18;
+      // Cyan-purple iridescent edge
+      float irid=sin(n*5.0+uTime*0.25)*0.5+0.5;
+      col=mix(col,vec3(0.0,0.45,0.80),irid*0.06); col=mix(col,vec3(0.38,0.0,0.80),(1.0-irid)*0.04);
+      // Glow hotspot under cursor
+      float glow=exp(-mDist*3.5)*0.10;
+      col+=vec3(0.12,0.38,0.70)*glow;
+      float vig=1.0-length((uv-0.5)*1.12);
+      col*=clamp(vig*1.1,0.0,1.0);
+      gl_FragColor=vec4(col, uAlpha*clamp(vig*1.5,0.0,1.0));
+    }
+  `,
+  transparent: true,
+  depthWrite: false
+});
+const liquidMesh = new THREE.Mesh(new THREE.PlaneGeometry(50, 30), liquidMat);
+liquidMesh.position.set(0, 0, -2);
+liquidMesh.visible = false;
+scene.add(liquidMesh);
+
+// ── 3D HUMYNEX TEXT ───────────────────────────────────────────────
+let text3dGroup = null, text3dMesh = null;
+let neonLights = [];
+let travelLight = null;
+let textOutlinePoints = [];
+
+// Build a procedural equirectangular env map that gives real chrome reflections
+function buildChromeEnvMap() {
+  const W = 512, H = 256;
+  const c = document.createElement('canvas'); c.width = W; c.height = H;
+  const ctx = c.getContext('2d');
+  // Neutral dark base — no color cast
+  ctx.fillStyle = '#080808'; ctx.fillRect(0, 0, W, H);
+  // Pure white key light top-center — creates the main bright chrome highlight
+  const key = ctx.createRadialGradient(W*0.5, H*0.06, 0, W*0.5, H*0.10, H*0.50);
+  key.addColorStop(0,   'rgba(255,255,255,1.0)');
+  key.addColorStop(0.05,'rgba(248,248,248,0.98)');
+  key.addColorStop(0.20,'rgba(182,182,182,0.70)');
+  key.addColorStop(0.50,'rgba(55,55,55,0.22)');
+  key.addColorStop(1,   'transparent');
+  ctx.fillStyle = key; ctx.fillRect(0, 0, W, H);
+  // Deep black chrome dip — gives the classic dark band across metal
+  const dip = ctx.createLinearGradient(0, H*0.30, 0, H*0.52);
+  dip.addColorStop(0,  'rgba(0,0,0,0)');
+  dip.addColorStop(0.5,'rgba(0,0,0,0.88)');
+  dip.addColorStop(1,  'rgba(0,0,0,0)');
+  ctx.fillStyle = dip; ctx.fillRect(0, H*0.25, W, H*0.30);
+  // Silver/grey floor reflection — warm neutral, no cyan
+  const floor = ctx.createLinearGradient(0, H*0.72, 0, H);
+  floor.addColorStop(0,  'rgba(130,130,130,0.0)');
+  floor.addColorStop(0.4,'rgba(165,165,168,0.58)');
+  floor.addColorStop(0.8,'rgba(88,88,92,0.74)');
+  floor.addColorStop(1,  'rgba(28,28,30,0.88)');
+  ctx.fillStyle = floor; ctx.fillRect(0, H*0.65, W, H*0.35);
+  // Left secondary cool highlight
+  const sec = ctx.createRadialGradient(W*0.12, H*0.20, 0, W*0.12, H*0.20, H*0.22);
+  sec.addColorStop(0,  'rgba(222,228,238,0.78)');
+  sec.addColorStop(0.4,'rgba(138,142,152,0.28)');
+  sec.addColorStop(1,  'transparent');
+  ctx.fillStyle = sec; ctx.fillRect(0, 0, W, H);
+  // Right subtle grey reflection
+  const right = ctx.createRadialGradient(W*0.90, H*0.44, 0, W*0.88, H*0.50, H*0.38);
+  right.addColorStop(0,  'rgba(178,180,188,0.45)');
+  right.addColorStop(0.4,'rgba(78,80,86,0.16)');
+  right.addColorStop(1,  'transparent');
+  ctx.fillStyle = right; ctx.fillRect(0, 0, W, H);
+  const tex = new THREE.CanvasTexture(c);
+  tex.mapping = THREE.EquirectangularReflectionMapping;
+  const pmrem = new THREE.PMREMGenerator(renderer);
+  pmrem.compileEquirectangularShader();
+  const rt = pmrem.fromEquirectangular(tex);
+  pmrem.dispose(); tex.dispose();
+  return rt.texture;
+}
+
+const chromeEnvMap = buildChromeEnvMap();
+
+new FontLoader().load('/fonts/helvetiker_bold.typeface.json', (font) => {
+  const geo = new TextGeometry('HUMYNEX', {
+    font, size: 3.0, depth: 0.60,
+    curveSegments: 14,
+    bevelEnabled: true, bevelThickness: 0.14, bevelSize: 0.12, bevelSegments: 8
+  });
+  geo.computeBoundingBox();
+  const cx = (geo.boundingBox.max.x + geo.boundingBox.min.x) / 2;
+  const cy = (geo.boundingBox.max.y + geo.boundingBox.min.y) / 2;
+  const mat = new THREE.MeshStandardMaterial({
+    color: 0xCCCDD4,
+    metalness: 1.0,
+    roughness: 0.06,
+    emissive: new THREE.Color(0x001a33),
+    emissiveIntensity: 0.5,
+    envMap: chromeEnvMap,
+    envMapIntensity: 1.3,
+    transparent: true
+  });
+  text3dMesh = new THREE.Mesh(geo, mat);
+  text3dMesh.position.set(-cx, -cy, 0);
+  text3dGroup = new THREE.Group();
+  text3dGroup.add(text3dMesh);
+
+  // Letter outline traces — neon follows actual letter shapes, not a box
+  const shapes = font.generateShapes('HUMYNEX', 3.0);
+  textOutlinePoints = [];
+  shapes.forEach(shape => {
+    const pts2d = shape.getPoints(55);
+    const pts3d = pts2d.map(p => new THREE.Vector3(p.x - cx, p.y - cy, 0.14));
+    const lineGeo = new THREE.BufferGeometry().setFromPoints(pts3d);
+    const lineMat = new THREE.LineBasicMaterial({
+      color: 0x00b4ff, transparent: true, opacity: 0.30,
+      blending: THREE.AdditiveBlending
+    });
+    text3dGroup.add(new THREE.LineLoop(lineGeo, lineMat));
+    pts3d.forEach(p => textOutlinePoints.push(p.clone()));
+    // Holes (inner counters, e.g. enclosed spaces in letters)
+    if (shape.holes) shape.holes.forEach(hole => {
+      const hpts = hole.getPoints(30).map(p => new THREE.Vector3(p.x - cx, p.y - cy, 0.14));
+      const hGeo = new THREE.BufferGeometry().setFromPoints(hpts);
+      text3dGroup.add(new THREE.LineLoop(hGeo, lineMat.clone()));
+      hpts.forEach(p => textOutlinePoints.push(p.clone()));
+    });
+  });
+  // Traveling spark light — traces the letter outlines
+  travelLight = new THREE.PointLight(0x00ccff, 0, 5.5);
+  const sparkGeo = new THREE.SphereGeometry(0.07, 6, 6);
+  const sparkMat = new THREE.MeshBasicMaterial({ color: 0x55eeff, blending: THREE.AdditiveBlending });
+  travelLight.add(new THREE.Mesh(sparkGeo, sparkMat));
+  text3dGroup.add(travelLight);
+
+  // Silver key lights
+  const textLight = new THREE.PointLight(0xffffff, 1.4, 22);
+  textLight.position.set(0, 1.5, 3.5);
+  text3dGroup.add(textLight);
+  const textLight2 = new THREE.PointLight(0xe0eaff, 0.5, 14);
+  textLight2.position.set(0, -1.5, 4);
+  text3dGroup.add(textLight2);
+
+  // Neon electricity strip — 6 lights flowing along the word width
+  const neonXPos = [-7.5, -4.5, -1.5, 1.5, 4.5, 7.5];
+  const neonCols = [0x00b4ff, 0x60efff, 0x00ccff, 0x60efff, 0x00b4ff, 0x60efff];
+  neonXPos.forEach((x, i) => {
+    const nl = new THREE.PointLight(neonCols[i], 0, 8);
+    nl.position.set(x, 0, 0.5);
+    text3dGroup.add(nl);
+    neonLights.push(nl);
+  });
+  // Rim backlights — cyan left, electric purple right
+  const rimL = new THREE.PointLight(0x00b4ff, 0, 14);
+  rimL.position.set(-9, 0, -1.0);
+  text3dGroup.add(rimL);
+  neonLights.push(rimL);
+  const rimR = new THREE.PointLight(0x5533ff, 0, 14);
+  rimR.position.set(9, 0, -1.0);
+  text3dGroup.add(rimR);
+  neonLights.push(rimR);
+
+  text3dGroup.position.set(0, 2.8, 0);
+  text3dGroup.visible = false;
+  scene.add(text3dGroup);
+});
 
 
 
@@ -777,9 +995,9 @@ SVC_WORLD.add(waveAccMesh);
 
 function _waveY(wx, wz, phase) {
   return (
-    Math.sin(wx * 0.21 + wz * 0.17 + phase)        * 1.80 +
-    Math.sin(wx * 0.11 - wz * 0.13 - phase * 0.62) * 1.00 +
-    Math.sin(wx * 0.34 + wz * 0.29 + phase * 1.35) * 0.50
+    Math.sin(wx * 0.21 + wz * 0.17 + phase)        * 4.20 +
+    Math.sin(wx * 0.11 - wz * 0.13 - phase * 0.62) * 2.40 +
+    Math.sin(wx * 0.34 + wz * 0.29 + phase * 1.35) * 1.20
   );
 }
 
@@ -1338,14 +1556,14 @@ function updateUI(sp) {
     else{heroText.classList.remove('visible');}
   }
 
-  // Services text — covers gap after hero AND portal void (0.22–0.64)
-  showText(servicesText, sp>0.22&&sp<0.64);
+  // Services text hidden — replaced by HTML services overlay
+  showText(servicesText, false);
   showText(aiworldText, false);
   // Pricing text — starts early to eliminate gap before pricing
   showText(pricingText, s7>0.05&&sp>0.86);
   bookingCta.classList.toggle('visible', s7>0.2&&sp>0.86);
-  // Portfolio UI label
-  showText(projectsUI, sp>0.29&&sp<0.50);
+  // Portfolio UI label — hidden (overlay handles it)
+  showText(projectsUI, false);
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -1354,8 +1572,15 @@ function updateUI(sp) {
 const clock = new THREE.Clock();
 let frame = 0;
 
+let _rafPaused = false;
+document.addEventListener('visibilitychange', () => {
+  _rafPaused = document.hidden;
+  if (lenis) document.hidden ? lenis.stop() : lenis.start();
+});
+
 function animate(ts) {
   requestAnimationFrame(animate);
+  if (_rafPaused) return;
   if (lenis) lenis.raf(ts);
   const t = clock.getElapsedTime();
   const time = performance.now() * 0.001;
@@ -1367,6 +1592,73 @@ function animate(ts) {
   UNI.uTime.value = t;
 
   const s0=sP(0), s1=sP(1), s2=sP(2), s3=sP(3), s4=sP(4), s5=sP(5), s6=sP(6), s7=sP(7);
+
+  // ── PHYSICS PARTICLES — cursor repulsion (desktop only) ──
+  if (starMesh && !isMobile && frame % 2 === 0) {
+    const sAttr = starMesh.geometry.attributes.position;
+    const arr = sAttr.array;
+    const REPEL_R = 14, REPEL_R2 = REPEL_R * REPEL_R, REPEL_F = 0.20, SPRING = 0.0022, DAMP = 0.87;
+    raycaster.setFromCamera(mouse, camera);
+    raycaster.ray.intersectPlane(_physPlane, _physCursor);
+    const cx = _physCursor.x, cy = _physCursor.y;
+    for (let i = 0; i < starCount; i++) {
+      const ix = i*3, iy = i*3+1, iz = i*3+2;
+      const sx = arr[ix], sy = arr[iy], sz = arr[iz];
+      if (sz > -5) {
+        const dx = sx - cx, dy = sy - cy, d2 = dx*dx + dy*dy;
+        if (d2 < REPEL_R2) {
+          const d = Math.sqrt(d2) + 0.001;
+          const f = (1 - Math.sqrt(d2) / REPEL_R) * REPEL_F;
+          starVel[ix] += dx / d * f; starVel[iy] += dy / d * f;
+        }
+      }
+      starVel[ix] += (starBase[ix] - sx) * SPRING;
+      starVel[iy] += (starBase[iy] - sy) * SPRING;
+      starVel[iz] += (starBase[iz] - sz) * SPRING;
+      starVel[ix] *= DAMP; starVel[iy] *= DAMP; starVel[iz] *= DAMP;
+      arr[ix] = sx + starVel[ix]; arr[iy] = sy + starVel[iy]; arr[iz] = sz + starVel[iz];
+    }
+    sAttr.needsUpdate = true;
+  }
+
+  // ── LIQUID METAL HERO — hidden per user request ──
+  liquidMesh.visible = false;
+
+  // ── 3D HUMYNEX TEXT ──
+  if (text3dGroup) {
+    const textVis = ease(clamp01(sp < 0.12 ? 1.0 : (0.28 - sp) / 0.16));
+    text3dGroup.visible = textVis > 0.005;
+    if (text3dGroup.visible) {
+      if (text3dMesh) {
+        text3dMesh.material.opacity = textVis;
+        text3dMesh.material.emissiveIntensity = textVis * 0.5;
+      }
+      text3dGroup.rotation.y = Math.sin(t * 0.22) * 0.10;
+      text3dGroup.position.y = 2.8 + Math.sin(t * 0.38) * 0.12;
+      // FIX 3: Scale down on mobile so full HUMYNEX word fits portrait screen
+      const _mw = W();
+      const _mScale = _mw < 480 ? 0.42 : _mw < 640 ? 0.55 : _mw < 900 ? 0.72 : 1.0;
+      text3dGroup.scale.setScalar(_mScale);
+      // Neon ambient electricity — strip lights along word width
+      neonLights.forEach((nl, i) => {
+        if (i < 6) {
+          const wave = Math.sin(t * 5.0 + i * 1.1) * 0.5 + 0.5;
+          nl.intensity = textVis * (wave * 1.8 + 0.2);
+        } else {
+          nl.intensity = textVis * (0.8 + Math.sin(t * 1.4 + i * 2.1) * 0.5);
+        }
+      });
+      // Traveling spark traces letter outlines
+      if (travelLight && textOutlinePoints.length > 0) {
+        const progress = (t * 0.42) % 1;
+        const idx = Math.floor(progress * textOutlinePoints.length);
+        const pos = textOutlinePoints[idx];
+        travelLight.position.copy(pos);
+        travelLight.position.z = 0.55;
+        travelLight.intensity = textVis * (9.0 + Math.sin(t * 18) * 2.5);
+      }
+    }
+  }
 
   // LOGO hidden — removed per user request
   LOGO_GROUP.visible = false;
@@ -1411,10 +1703,10 @@ function animate(ts) {
       const finalVis = facing * svcVis;
       const glowBoost = isHov ? 1.4 : 1.0;
 
-      svcGlassMats[i].opacity    = finalVis * 0.18 * glowBoost;
-      svcContentMats[i].opacity  = finalVis * 0.90;
-      svcEdgeMats[i].opacity     = finalVis * (isHov ? 0.85 : 0.52);
-      svcGlowLights[i].intensity = finalVis * (isHov ? 1.8 : 0.7);
+      svcGlassMats[i].opacity    = 0;
+      svcContentMats[i].opacity  = 0;
+      svcEdgeMats[i].opacity     = 0;
+      svcGlowLights[i].intensity = 0;
 
       if (isHov) canvas.style.cursor = 'pointer';
     });
@@ -1425,9 +1717,9 @@ function animate(ts) {
     svcLight2.intensity = svcVis * 1.8;
 
     // 3D wave grid — synced with services carousel rotation via t
-    waveGridMat.opacity = svcVis * 0.35;
-    waveAccMat.opacity  = svcVis * 0.85;
-    if (svcVis > 0.02) {
+    waveGridMat.opacity = svcVis * 0.55;
+    waveAccMat.opacity  = svcVis * 1.00;
+    if (svcVis > 0.02 && (!isMobile || frame % 3 === 0)) {
       const wPhase = t * 0.38;
       updateWaveGrid(waveGridGeo, wPhase);
       updateWaveAccGrid(waveAccGeo, wPhase);
@@ -1702,7 +1994,7 @@ function animate(ts) {
   if (frame % 2 === 0) updateUI(sp);
 
   // ── RENDER ──
-  if (composer) {
+  if (composer && !isMobile) {
     composer.render();
   } else {
     renderer.render(scene, camera);
