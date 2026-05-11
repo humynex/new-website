@@ -548,7 +548,7 @@ const priceLight = new THREE.PointLight(0x00c8ff, 0, 35); priceLight.position.se
 // ── STAR FIELD ────────────────────────────────────────────────────
 let starMesh, starBase, starVel, starCount;
 {
-  const count = isMobile ? 600 : 2800;
+  const count = isMobile ? 400 : 1600;
   starCount = count;
   const geo = new THREE.BufferGeometry();
   const pos = new Float32Array(count * 3);
@@ -1571,6 +1571,7 @@ function updateUI(sp) {
 // ═══════════════════════════════════════════════════════════════
 const clock = new THREE.Clock();
 let frame = 0;
+let _lastTs = 0;
 
 let _rafPaused = false;
 document.addEventListener('visibilitychange', () => {
@@ -1581,6 +1582,8 @@ document.addEventListener('visibilitychange', () => {
 function animate(ts) {
   requestAnimationFrame(animate);
   if (_rafPaused) return;
+  if (ts - _lastTs < 14) return; // cap ~60fps — prevents 120/144Hz doubling GPU work
+  _lastTs = ts;
   if (lenis) lenis.raf(ts);
   const t = clock.getElapsedTime();
   const time = performance.now() * 0.001;
@@ -1719,7 +1722,7 @@ function animate(ts) {
     // 3D wave grid — synced with services carousel rotation via t
     waveGridMat.opacity = svcVis * 0.55;
     waveAccMat.opacity  = svcVis * 1.00;
-    if (svcVis > 0.02 && (!isMobile || frame % 3 === 0)) {
+    if (svcVis > 0.02 && frame % 2 === 0) {
       const wPhase = t * 0.38;
       updateWaveGrid(waveGridGeo, wPhase);
       updateWaveAccGrid(waveAccGeo, wPhase);
@@ -1993,9 +1996,13 @@ function animate(ts) {
   // ── UI UPDATE (every 2 frames) ──
   if (frame % 2 === 0) updateUI(sp);
 
-  // ── RENDER ──
+  // ── RENDER — bloom every other frame to halve post-processing cost ──
   if (composer && !isMobile) {
-    composer.render();
+    if (frame % 2 === 0) {
+      composer.render();
+    } else {
+      renderer.render(scene, camera);
+    }
   } else {
     renderer.render(scene, camera);
   }
