@@ -444,7 +444,7 @@ const isMobile = window.innerWidth < 768 || /Mobi|Android/i.test(navigator.userA
 renderer.setPixelRatio(isMobile ? Math.min(window.devicePixelRatio, 1.0) : Math.min(window.devicePixelRatio, 1.25));
 renderer.setSize(W(), H());
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
-renderer.toneMappingExposure = 1.2;
+renderer.toneMappingExposure = 0.85;
 renderer.outputColorSpace = THREE.SRGBColorSpace;
 renderer.setClearColor(0x000000, 0);
 
@@ -715,12 +715,12 @@ new FontLoader().load('/fonts/helvetiker_bold.typeface.json', (font) => {
   const cy = (geo.boundingBox.max.y + geo.boundingBox.min.y) / 2;
   const mat = new THREE.MeshStandardMaterial({
     color: 0xCCCDD4,
-    metalness: 1.0,
-    roughness: 0.06,
-    emissive: new THREE.Color(0x001a33),
-    emissiveIntensity: 0.5,
+    metalness: 0.88,
+    roughness: 0.22,
+    emissive: new THREE.Color(0x000810),
+    emissiveIntensity: 0.12,
     envMap: chromeEnvMap,
-    envMapIntensity: 1.3,
+    envMapIntensity: 0.8,
     transparent: true
   });
   text3dMesh = new THREE.Mesh(geo, mat);
@@ -757,10 +757,10 @@ new FontLoader().load('/fonts/helvetiker_bold.typeface.json', (font) => {
   text3dGroup.add(travelLight);
 
   // Silver key lights
-  const textLight = new THREE.PointLight(0xffffff, 1.4, 22);
+  const textLight = new THREE.PointLight(0xffffff, 0.45, 22);
   textLight.position.set(0, 1.5, 3.5);
   text3dGroup.add(textLight);
-  const textLight2 = new THREE.PointLight(0xe0eaff, 0.5, 14);
+  const textLight2 = new THREE.PointLight(0xe0eaff, 0.18, 14);
   textLight2.position.set(0, -1.5, 4);
   text3dGroup.add(textLight2);
 
