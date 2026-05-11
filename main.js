@@ -441,7 +441,7 @@ const renderer = new THREE.WebGLRenderer({
   canvas, antialias: true, alpha: true, powerPreference: 'high-performance'
 });
 const isMobile = window.innerWidth < 768 || /Mobi|Android/i.test(navigator.userAgent);
-renderer.setPixelRatio(isMobile ? 1.0 : Math.min(window.devicePixelRatio, 1.25));
+renderer.setPixelRatio(isMobile ? Math.min(window.devicePixelRatio, 1.0) : Math.min(window.devicePixelRatio, 1.25));
 renderer.setSize(W(), H());
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
 renderer.toneMappingExposure = 1.2;
@@ -1572,6 +1572,7 @@ function updateUI(sp) {
 const clock = new THREE.Clock();
 let frame = 0;
 let _lastTs = 0;
+const _fpsCap = isMobile ? 33 : 14; // 30fps mobile, 60fps desktop
 
 let _rafPaused = false;
 document.addEventListener('visibilitychange', () => {
@@ -1582,7 +1583,7 @@ document.addEventListener('visibilitychange', () => {
 function animate(ts) {
   requestAnimationFrame(animate);
   if (_rafPaused) return;
-  if (ts - _lastTs < 14) return; // cap ~60fps — prevents 120/144Hz doubling GPU work
+  if (ts - _lastTs < _fpsCap) return; // 30fps on mobile, 60fps on desktop
   _lastTs = ts;
   if (lenis) lenis.raf(ts);
   const t = clock.getElapsedTime();
@@ -1966,10 +1967,10 @@ function animate(ts) {
   camera.position.set(cam.x, cam.y, cam.z);
   camera.lookAt(look.x, look.y, look.z);
 
-  // ── SCENE UPDATES ──
-  aiWorld.update(t);
-  logo.update(time);
-  drones.update(time);
+  // ── SCENE UPDATES — skip hidden worlds on mobile to save GPU ──
+  if (!isMobile) aiWorld.update(t);
+  if (!isMobile || frame % 2 === 0) logo.update(time);
+  if (!isMobile || frame % 2 === 0) drones.update(time);
 
   // ── LIGHTS PULSE ──
   ptCyan.intensity   = 3.0 + Math.sin(t*1.7)*.5;
