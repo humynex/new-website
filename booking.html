@@ -151,6 +151,17 @@
     .bf-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
     @media (max-width: 580px) { .bf-row { grid-template-columns: 1fr; } }
 
+    /* ── Mobile: nav and form wrap ── */
+    @media (max-width: 640px) {
+      nav { padding: 16px 20px; }
+      .page { padding: 100px 14px 60px; }
+      .bk-form-wrap { padding: 28px 18px 32px; border-radius: 14px; }
+      .bf-section { margin-bottom: 24px; padding-bottom: 24px; }
+      .bk-title { font-size: clamp(26px, 7vw, 48px); }
+      .bf-plans { grid-template-columns: 1fr; gap: 8px; }
+      .bf-submit { padding: 15px; font-size: 10px; }
+    }
+
     .bf-group { display: flex; flex-direction: column; gap: 7px; }
     .bf-label {
       font-family: 'Space Mono', monospace; font-size: 9px;
@@ -331,7 +342,7 @@
       <input type="hidden" name="_captcha" value="true">
       <input type="hidden" name="_template" value="table">
       <input type="hidden" name="_subject" value="New HUMYNEX Booking Request">
-      <input type="hidden" name="_next" value="">
+      <input type="hidden" name="_next" value="https://humynex.com/booking.html?success=1">
 
       <!-- 01 — Contact -->
       <div class="bf-section">
