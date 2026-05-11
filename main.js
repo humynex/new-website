@@ -1447,7 +1447,7 @@ try {
   {
     composer = new EffectComposer(renderer);
     composer.addPass(new RenderPass(scene, camera));
-    bloomPass = new UnrealBloomPass(new THREE.Vector2(W() / 3, H() / 3), 0.65, 0.4, 0.3);
+    bloomPass = new UnrealBloomPass(new THREE.Vector2(W() / 3, H() / 3), 0.45, 0.4, 0.35);
     composer.addPass(bloomPass);
     const grainPass = new ShaderPass(GrainShader);
     grainPass.uniforms.uTime = UNI.uTime;
@@ -1572,7 +1572,7 @@ function updateUI(sp) {
 const clock = new THREE.Clock();
 let frame = 0;
 let _lastTs = 0;
-const _fpsCap = isMobile ? 33 : 14; // 30fps mobile, 60fps desktop
+const _fpsCap = isMobile ? 41 : 14; // 24fps mobile, 60fps desktop
 
 let _rafPaused = false;
 document.addEventListener('visibilitychange', () => {
@@ -1635,7 +1635,7 @@ function animate(ts) {
     if (text3dGroup.visible) {
       if (text3dMesh) {
         text3dMesh.material.opacity = textVis;
-        text3dMesh.material.emissiveIntensity = textVis * 0.5;
+        text3dMesh.material.emissiveIntensity = textVis * 0.18;
       }
       text3dGroup.rotation.y = Math.sin(t * 0.22) * 0.10;
       text3dGroup.position.y = 2.8 + Math.sin(t * 0.38) * 0.12;
@@ -1643,23 +1643,22 @@ function animate(ts) {
       const _mw = W();
       const _mScale = _mw < 480 ? 0.42 : _mw < 640 ? 0.55 : _mw < 900 ? 0.72 : 1.0;
       text3dGroup.scale.setScalar(_mScale);
-      // Neon ambient electricity — strip lights along word width
-      neonLights.forEach((nl, i) => {
-        if (i < 6) {
-          const wave = Math.sin(t * 5.0 + i * 1.1) * 0.5 + 0.5;
-          nl.intensity = textVis * (wave * 1.8 + 0.2);
-        } else {
-          nl.intensity = textVis * (0.8 + Math.sin(t * 1.4 + i * 2.1) * 0.5);
+      if (!isMobile) {
+        // Neon strip lights — static, dark ambient level only (no pulsing = no flicker)
+        neonLights.forEach((nl, i) => {
+          nl.intensity = textVis * (i < 6 ? 0.25 : 0.18);
+        });
+        // Traveling spark — slow, low intensity (no rapid sin = no brightness spike)
+        if (travelLight && textOutlinePoints.length > 0 && frame % 2 === 0) {
+          const progress = (t * 0.42) % 1;
+          const idx = Math.floor(progress * textOutlinePoints.length);
+          travelLight.position.copy(textOutlinePoints[idx]);
+          travelLight.position.z = 0.55;
+          travelLight.intensity = textVis * 2.5;
         }
-      });
-      // Traveling spark traces letter outlines
-      if (travelLight && textOutlinePoints.length > 0) {
-        const progress = (t * 0.42) % 1;
-        const idx = Math.floor(progress * textOutlinePoints.length);
-        const pos = textOutlinePoints[idx];
-        travelLight.position.copy(pos);
-        travelLight.position.z = 0.55;
-        travelLight.intensity = textVis * (9.0 + Math.sin(t * 18) * 2.5);
+      } else {
+        neonLights.forEach(nl => { nl.intensity = 0; });
+        if (travelLight) travelLight.intensity = 0;
       }
     }
   }
@@ -1886,7 +1885,7 @@ function animate(ts) {
   PRICING_WORLD.visible = false;
   hoveredPriceCard = null;
   if (bloomPass) {
-    bloomPass.strength += (0.75 - bloomPass.strength) * 0.06;
+    bloomPass.strength += (0.45 - bloomPass.strength) * 0.06;
   }
 
   // ── CURSOR ──
