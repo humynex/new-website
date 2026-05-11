@@ -3481,8 +3481,12 @@
       trustBar.style.opacity = tVis;
       trustBar.classList.toggle('visible', tVis > 0.02);
     }
-    // Testimonial swiper — hidden (removed per user request)
-    if (testimonialSwiper) { testimonialSwiper.style.opacity = 0; testimonialSwiper.classList.remove('visible'); }
+    // Testimonial swiper — top-right, appears with pricing (sp 0.91–1.00)
+    if (testimonialSwiper) {
+      const tVis = Math.min(1, Math.max(0, (_scrollProg - 0.91) / 0.03));
+      testimonialSwiper.style.opacity = tVis;
+      testimonialSwiper.classList.toggle('visible', tVis > 0.02);
+    }
 
     // Services overlay — fades in at sp 0.29, fades out at 0.42
     if (servicesOverlay) {
