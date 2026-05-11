@@ -1233,7 +1233,7 @@
     }
     #h-slides-wrap.h-vis { opacity: 1; pointer-events: all; }
     #h-slides-track {
-      display: flex; width: 400vw; height: 100%;
+      display: flex; width: 500vw; height: 100%;
       transition: transform 0.75s cubic-bezier(0.77, 0, 0.175, 1);
       will-change: transform;
     }
@@ -3282,7 +3282,7 @@
       <div class="h-orb"></div>
       <div class="h-content">
         <span class="h-meta">HUMYNEX STUDIO · 2025</span>
-        <span class="h-num">01 / 04</span>
+        <span class="h-num">01 / 05</span>
         <h2 class="h-title">TLD Contracting</h2>
         <p class="h-tag-line">Website / Local Business</p>
         <div class="h-divider"></div>
@@ -3301,7 +3301,7 @@
       <div class="h-orb"></div>
       <div class="h-content">
         <span class="h-meta">HUMYNEX STUDIO · 2025</span>
-        <span class="h-num">02 / 04</span>
+        <span class="h-num">02 / 05</span>
         <h2 class="h-title">Alien Movers</h2>
         <p class="h-tag-line">Website Template / Moving Company</p>
         <div class="h-divider"></div>
@@ -3320,7 +3320,7 @@
       <div class="h-orb"></div>
       <div class="h-content">
         <span class="h-meta">HUMYNEX STUDIO · 2025</span>
-        <span class="h-num">03 / 04</span>
+        <span class="h-num">03 / 05</span>
         <h2 class="h-title">Venue Templates</h2>
         <p class="h-tag-line">Website Template / Event Venues</p>
         <div class="h-divider"></div>
@@ -3332,14 +3332,33 @@
       </div>
     </div>
 
-    <!-- 04 Coming Soon -->
-    <div class="h-slide h-coming-soon" style="--hc:#7b2fff">
-      <div class="h-slide-bg" style="background:radial-gradient(ellipse at center, rgba(123,47,255,0.08) 0%, transparent 70%)"></div>
+    <!-- 04 Bity Diamonds -->
+    <div class="h-slide" style="--hc:#60efff">
+      <div class="h-slide-bg" style="background:radial-gradient(ellipse at 60% 50%, rgba(96,239,255,0.06) 0%, transparent 70%)"></div>
       <span class="h-ghost-num">04</span>
       <div class="h-orb"></div>
       <div class="h-content">
+        <span class="h-meta">HUMYNEX STUDIO · 2025</span>
+        <span class="h-num">04 / 05</span>
+        <h2 class="h-title">The Bity Diamonds</h2>
+        <p class="h-tag-line">Brand Showcase / Jewelry</p>
+        <div class="h-divider"></div>
+        <p class="h-desc">A premium visual showcase for a luxury jewelry brand. Cinematic video direction, bold identity design, and a digital presence built to move product and elevate the brand.</p>
+        <div class="h-pills"><span>Brand</span><span>Video</span><span>Luxury</span><span>Identity</span></div>
+      </div>
+      <div class="h-preview">
+        <video src="/videos/bity-diamonds.mp4" autoplay muted loop playsinline preload="none" style="width:100%;height:100%;object-fit:cover;display:block"></video>
+      </div>
+    </div>
+
+    <!-- 05 Coming Soon -->
+    <div class="h-slide h-coming-soon" style="--hc:#7b2fff">
+      <div class="h-slide-bg" style="background:radial-gradient(ellipse at center, rgba(123,47,255,0.08) 0%, transparent 70%)"></div>
+      <span class="h-ghost-num">05</span>
+      <div class="h-orb"></div>
+      <div class="h-content">
         <span class="h-meta">MORE COMING SOON</span>
-        <span class="h-num">04 / 04</span>
+        <span class="h-num">05 / 05</span>
         <h2 class="h-title" style="font-size:clamp(32px,5vw,72px);letter-spacing:0.04em">More On<br>The Way.</h2>
         <p class="h-tag-line">New Projects Loading</p>
         <div class="h-divider"></div>
@@ -3366,8 +3385,9 @@
     <div class="h-dot" data-i="1"></div>
     <div class="h-dot" data-i="2"></div>
     <div class="h-dot" data-i="3"></div>
+    <div class="h-dot" data-i="4"></div>
   </div>
-  <span id="h-count">01 / 04</span>
+  <span id="h-count">01 / 05</span>
 </div>
 
 <!-- Contact Form Modal -->
@@ -3523,7 +3543,7 @@
   const hDots   = document.querySelectorAll('.h-dot');
   const hCount  = document.getElementById('h-count');
   const hSlides = document.querySelectorAll('.h-slide');
-  const H_COLORS = ['#F59E0B','#00e676','#c084fc','#7b2fff'];
+  const H_COLORS = ['#F59E0B','#00e676','#c084fc','#60efff','#7b2fff'];
   let hActiveIdx = 0;
 
   window.addEventListener('scroll', syncOverlays, { passive: true });
@@ -3540,7 +3560,7 @@
       d.style.background  = i === idx ? H_COLORS[idx] : 'rgba(255,255,255,0.14)';
       d.style.width       = i === idx ? '50px' : '26px';
     });
-    if (hCount) hCount.textContent = String(idx + 1).padStart(2,'0') + ' / 04';
+    if (hCount) hCount.textContent = String(idx + 1).padStart(2,'0') + ' / 05';
     if (window._setHBgColor) window._setHBgColor(H_COLORS[idx]);
   }
 
