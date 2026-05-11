@@ -1629,7 +1629,6 @@
       #nav-hamburger { display: none; }
       #nav-links { display: flex !important; gap: 5px; }
       #nav-links li a { width: 44px !important; height: 44px; }
-      #nav-links li:last-child { display: none; } /* hide Book pill on tiny phones — hero button covers it */
       .pill-icon svg { width: 14px; height: 14px; }
       #nav-x-canvas { width: 44px; height: 44px; }
       #logo-wordmark { font-size: 8px; letter-spacing: 0.12em; }
@@ -2829,16 +2828,6 @@
         <span class="pill-label">Pricing</span>
       </a>
     </li>
-    <li>
-      <a href="booking.html" style="--g-from:#00ff87;--g-to:#00b4d8">
-        <span class="pill-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
-          </svg>
-        </span>
-        <span class="pill-label">Book</span>
-      </a>
-    </li>
   </ul>
   <button id="nav-hamburger" aria-label="Toggle menu">
     <span></span><span></span><span></span>
@@ -2860,10 +2849,6 @@
   <a class="mob-link" href="#" data-mob-scene="7">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
     Pricing
-  </a>
-  <a class="mob-link" href="booking.html" style="color:#00ff87">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-    Book Now
   </a>
 </div>
 
@@ -3178,7 +3163,6 @@
 
 <!-- ── PRICING OVERLAY — Animated Glassy Cards ── -->
 <div id="pricing-overlay" data-lenis-prevent>
-  <canvas id="pricing-shader"></canvas>
   <div class="pg-wrap">
     <div class="pg-header">
       <h2 class="pg-title">Choose Your Path Forward</h2>
@@ -3332,19 +3316,19 @@
       </div>
     </div>
 
-    <!-- 04 Bity Diamonds -->
-    <div class="h-slide" style="--hc:#60efff">
-      <div class="h-slide-bg" style="background:radial-gradient(ellipse at 60% 50%, rgba(96,239,255,0.06) 0%, transparent 70%)"></div>
+    <!-- 04 YAPAH Designs -->
+    <div class="h-slide" style="--hc:#f472b6">
+      <div class="h-slide-bg" style="background:radial-gradient(ellipse at 60% 50%, rgba(244,114,182,0.06) 0%, transparent 70%)"></div>
       <span class="h-ghost-num">04</span>
       <div class="h-orb"></div>
       <div class="h-content">
         <span class="h-meta">HUMYNEX STUDIO · 2025</span>
         <span class="h-num">04 / 05</span>
-        <h2 class="h-title">The Bity Diamonds</h2>
-        <p class="h-tag-line">Brand Showcase / Jewelry</p>
+        <h2 class="h-title">YAPAH Designs</h2>
+        <p class="h-tag-line">Party Designer / Brand</p>
         <div class="h-divider"></div>
-        <p class="h-desc">A premium visual showcase for a luxury jewelry brand. Cinematic video direction, bold identity design, and a digital presence built to move product and elevate the brand.</p>
-        <div class="h-pills"><span>Brand</span><span>Video</span><span>Luxury</span><span>Identity</span></div>
+        <p class="h-desc">Full visual brand identity for YAPAH Designs — a bold, high-energy party design brand. Custom content direction, vibrant identity system, and social-ready visuals built to make every event unforgettable.</p>
+        <div class="h-pills"><span>Branding</span><span>Video</span><span>Events</span><span>Social</span></div>
       </div>
       <div class="h-preview">
         <video src="/videos/bity-diamonds.mp4" autoplay muted loop playsinline preload="none" style="width:100%;height:100%;object-fit:cover;display:block"></video>

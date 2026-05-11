@@ -1375,13 +1375,7 @@ priceGrid.material.opacity = 0;
 priceGrid.position.y = -5;
 PRICING_WORLD.add(priceGrid);
 
-// Decor ring
-const priceRing = new THREE.Mesh(
-  new THREE.TorusGeometry(7.5, 0.014, 8, 80),
-  new THREE.MeshBasicMaterial({ color:0x004466, transparent:true, opacity:0 })
-);
-priceRing.rotation.x = Math.PI*.5; priceRing.position.y = -1.2;
-PRICING_WORLD.add(priceRing);
+// Decor ring — removed (was causing visible ring artifact)
 
 const pricingCards = [];
 [
@@ -1643,23 +1637,8 @@ function animate(ts) {
       const _mw = W();
       const _mScale = _mw < 480 ? 0.42 : _mw < 640 ? 0.55 : _mw < 900 ? 0.72 : 1.0;
       text3dGroup.scale.setScalar(_mScale);
-      if (!isMobile) {
-        // Neon strip lights — static, dark ambient level only (no pulsing = no flicker)
-        neonLights.forEach((nl, i) => {
-          nl.intensity = textVis * (i < 6 ? 0.25 : 0.18);
-        });
-        // Traveling spark — slow, low intensity (no rapid sin = no brightness spike)
-        if (travelLight && textOutlinePoints.length > 0 && frame % 2 === 0) {
-          const progress = (t * 0.42) % 1;
-          const idx = Math.floor(progress * textOutlinePoints.length);
-          travelLight.position.copy(textOutlinePoints[idx]);
-          travelLight.position.z = 0.55;
-          travelLight.intensity = textVis * 2.5;
-        }
-      } else {
-        neonLights.forEach(nl => { nl.intensity = 0; });
-        if (travelLight) travelLight.intensity = 0;
-      }
+      neonLights.forEach(nl => { nl.intensity = 0; });
+      if (travelLight) { travelLight.intensity = 0; travelLight.visible = false; }
     }
   }
 
@@ -1719,14 +1698,9 @@ function animate(ts) {
     svcLight1.intensity = svcVis * 2.5;
     svcLight2.intensity = svcVis * 1.8;
 
-    // 3D wave grid — synced with services carousel rotation via t
+    // 3D wave grid — static solid lines, no animation
     waveGridMat.opacity = svcVis * 0.55;
     waveAccMat.opacity  = svcVis * 1.00;
-    if (svcVis > 0.02 && frame % 2 === 0) {
-      const wPhase = t * 0.38;
-      updateWaveGrid(waveGridGeo, wPhase);
-      updateWaveAccGrid(waveAccGeo, wPhase);
-    }
   }
 
   // ── AI WORLD — hidden ──
